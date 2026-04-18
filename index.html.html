@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Padel Past our Bedtime</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121933;
+      --panel-2: #1a2345;
+      --text: #eef2ff;
+      --muted: #aab4d6;
+      --accent: #78e08f;
+      --accent-2: #87cfff;
+      --border: rgba(255, 255, 255, 0.09);
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #07101e 0%, #0b1020 100%);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 72px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 16px;
+      padding: 28px;
+      border: 1px solid var(--border);
+      background: radial-gradient(circle at top right, rgba(135, 207, 255, 0.16), transparent 32%), var(--panel);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      line-height: 1.05;
+    }
+
+    .sub {
+      color: var(--muted);
+      margin: 0;
+      font-size: 1.05rem;
+      max-width: 70ch;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.2fr 0.9fr 0.9fr auto;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 800px) {
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    input,
+    select,
+    button {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #08111f;
+      font-weight: 800;
+      border: none;
+    }
+
+    .notice {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 212, 121, 0.25);
+      background: rgba(255, 212, 121, 0.08);
+      color: #ffe9b8;
+      display: none;
+      line-height: 1.5;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin: 24px 0;
+    }
+
+    @media (max-width: 700px) {
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .stat .label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .stat .value {
+      font-size: 1.8rem;
+      font-weight: 800;
+    }
+
+    .section-title {
+      margin: 34px 0 16px;
+      font-size: 1.2rem;
+      color: var(--text);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 860px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .date-pill {
+      background: rgba(120, 224, 143, 0.14);
+      color: #baffcb;
+      border: 1px solid rgba(120, 224, 143, 0.2);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      white-space: nowrap;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0 10px;
+    }
+
+    .meta-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .meta-item .k {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+    }
+
+    .meta-item .v {
+      font-weight: 700;
+    }
+
+    .notes {
+      margin-top: 12px;
+      color: #dbe3ff;
+      line-height: 1.5;
+      white-space: pre-line;
+    }
+
+    .empty,
+    .loading {
+      padding: 24px;
+      background: var(--panel);
+      border-radius: 18px;
+      border: 1px dashed var(--border);
+      color: var(--muted);
+    }
+
+    .footer {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    code {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">Live from Google Sheets</div>
+      <h1>Padel Past our Bedtime</h1>
+      <p class="sub">A clean public schedule page powered by your Google Sheet. Update the sheet, refresh the page, and the latest sessions appear automatically.</p>
+
+      <div class="toolbar">
+        <input id="searchInput" type="text" placeholder="Search by player, remark, day, or court" />
+        <select id="locationFilter">
+          <option value="">All locations</option>
+        </select>
+        <select id="sortOrder">
+          <option value="asc">Earliest first</option>
+          <option value="desc">Latest first</option>
+        </select>
+        <button id="refreshBtn" type="button">Refresh</button>
+      </div>
+
+      <div class="notice" id="notice"></div>
+    </section>
+
+    <section class="stats" id="stats"></section>
+
+    <h2 class="section-title">Sessions</h2>
+    <div id="content" class="grid"></div>
+
+    <p class="footer">
+      This page loads Google Sheets data without external JS libraries. If live loading fails in a sandbox or local file preview, it falls back to embedded backup data.
+    </p>
+  </div>
+
+  <script>
+    const SHEET_ID = '1h3ZnjMmwfC_jlLAto90GMuPkl4yQ5lfaQ7U4P1JtSfU';
+    const SHEET_GID = '0';
+    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
+
+    const fallbackRows = [
+      { day: 'Sat', date: '18/04/2026', start: '6:30', end: '8:30', duration: '120', location: 'Wadala', court: '3 Men Americano', players: 'Yogesh & Sahil to book other courts. Gautam Dubai to pay me 1200.' },
+      { day: 'Sun', date: '19/04/2026', start: '20:00', end: '21:30', duration: '90', location: 'Wadala', court: '3', players: 'AD + NMD + Sheldon + Rohit Ramaswamy' },
+      { day: 'Wed', date: '22/04/2026', start: '19:00', end: '20:30', duration: '90', location: 'Wadala', court: '3', players: 'AD + Aman Makan + Dinesh + Advait' },
+      { day: 'Thu', date: '23/04/2026', start: '19:00', end: '20:30', duration: '90', location: 'Wadala', court: '3', players: 'AD + NMD + Sonia +' },
+      { day: 'Fri', date: '24/04/2026', start: '18:00', end: '20:00', duration: '120', location: 'Wadala', court: '4', players: 'Women Americano' },
+      { day: 'Sat', date: '25/04/2026', start: '6:30', end: '8:00', duration: '90', location: 'Wadala', court: '3', players: 'AD +' },
+      { day: 'Sun', date: '26/04/2026', start: '18:00', end: '19:30', duration: '90', location: 'Wadala', court: '3', players: '' }
+    ];
+
+    const contentEl = document.getElementById('content');
+    const statsEl = document.getElementById('stats');
+    const locationFilterEl = document.getElementById('locationFilter');
+    const sortOrderEl = document.getElementById('sortOrder');
+    const searchInputEl = document.getElementById('searchInput');
+    const refreshBtnEl = document.getElementById('refreshBtn');
+    const noticeEl = document.getElementById('notice');
+
+    let allRows = [];
+
+    function showNotice(message) {
+      noticeEl.textContent = message;
+      noticeEl.style.display = 'block';
+    }
+
+    function hideNotice() {
+      noticeEl.style.display = 'none';
+      noticeEl.textContent = '';
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function normaliseTime(value) {
+      if (value === null || value === undefined || value === '') return '00:00';
+      const str = String(value).trim();
+
+      if (/^\d{1,2}:\d{2}$/.test(str)) {
+        const parts = str.split(':');
+        return `${parts[0].padStart(2, '0')}:${parts[1]}`;
+      }
+
+      if (/^\d{1,2}\.\d+$/.test(str)) {
+        const n = Number(str);
+        const hours = Math.floor(n);
+        const minutes = Math.round((n - hours) * 60);
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+      }
+
+      if (/^\d{1,2}$/.test(str)) {
+        return `${str.padStart(2, '0')}:00`;
+      }
+
+      return str;
+    }
+
+    function parseDate(dateStr, timeStr) {
+      if (!dateStr) return null;
+      const cleanDate = String(dateStr).trim().replace(/\s+/g, '');
+      const match = cleanDate.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (!match) return null;
+
+      const dd = match[1];
+      const mm = match[2];
+      const yyyy = match[3];
+      const normalisedTime = normaliseTime(timeStr || '00:00');
+      const date = new Date(`${yyyy}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}T${normalisedTime}:00`);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    function formatReadableDate(item) {
+      const d = parseDate(item.date, item.start);
+      if (!d) return `${item.day} ${item.date}`.trim();
+      return d.toLocaleDateString(undefined, {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+    }
+
+    function cleanRow(row) {
+      return {
+        day: String(row.day || '').trim(),
+        date: String(row.date || '').trim(),
+        start: normaliseTime(row.start || ''),
+        end: normaliseTime(row.end || ''),
+        duration: String(row.duration || '').trim(),
+        location: String(row.location || '').trim(),
+        court: String(row.court || '').trim(),
+        players: String(row.players || '').trim()
+      };
+    }
+
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let cell = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"') {
+          if (inQuotes && next === '"') {
+            cell += '"';
+            i += 1;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === ',' && !inQuotes) {
+          row.push(cell);
+          cell = '';
+        } else if ((char === '\n' || char === '\r') && !inQuotes) {
+          if (char === '\r' && next === '\n') i += 1;
+          row.push(cell);
+          rows.push(row);
+          row = [];
+          cell = '';
+        } else {
+          cell += char;
+        }
+      }
+
+      if (cell.length > 0 || row.length > 0) {
+        row.push(cell);
+        rows.push(row);
+      }
+
+      return rows;
+    }
+
+    function headerIndexMap(headers) {
+      const map = {};
+      headers.forEach((header, index) => {
+        map[String(header || '').trim().toLowerCase()] = index;
+      });
+      return map;
+    }
+
+    function getCellByHeader(row, map, headerNames) {
+      for (let i = 0; i < headerNames.length; i += 1) {
+        const index = map[headerNames[i]];
+        if (index !== undefined) {
+          return row[index] || '';
+        }
+      }
+      return '';
+    }
+
+    function normaliseRowsFromCsv(csvText) {
+      const table = parseCsv(csvText);
+      if (!table.length) return [];
+
+      const headers = table[0];
+      const map = headerIndexMap(headers);
+
+      return table
+        .slice(1)
+        .filter((row) => row.some((cell) => String(cell || '').trim()))
+        .map((row) => ({
+          day: getCellByHeader(row, map, ['day']),
+          date: getCellByHeader(row, map, ['date']),
+          start: getCellByHeader(row, map, ['start time', 'start']),
+          end: getCellByHeader(row, map, ['end time', 'end']),
+          duration: getCellByHeader(row, map, ['duration (min)', 'duration']),
+          location: getCellByHeader(row, map, ['location']),
+          court: getCellByHeader(row, map, ['court']),
+          players: getCellByHeader(row, map, ['players payment/remarks', 'players', 'remarks'])
+        }))
+        .map(cleanRow)
+        .filter((item) => item.date && item.location);
+    }
+
+    function getFilteredRows() {
+      const search = searchInputEl.value.trim().toLowerCase();
+      const location = locationFilterEl.value;
+      const sortOrder = sortOrderEl.value;
+
+      const rows = allRows.filter((item) => {
+        const haystack = [item.day, item.date, item.start, item.end, item.duration, item.location, item.court, item.players]
+          .join(' ')
+          .toLowerCase();
+        const matchesSearch = !search || haystack.includes(search);
+        const matchesLocation = !location || item.location === location;
+        return matchesSearch && matchesLocation;
+      });
+
+      rows.sort((a, b) => {
+        const da = parseDate(a.date, a.start);
+        const db = parseDate(b.date, b.start);
+        const ta = da ? da.getTime() : 0;
+        const tb = db ? db.getTime() : 0;
+        return sortOrder === 'asc' ? ta - tb : tb - ta;
+      });
+
+      return rows;
+    }
+
+    function createStatCard(label, value, fullWidth) {
+      const card = document.createElement('div');
+      card.className = 'stat';
+      if (fullWidth) {
+        card.style.gridColumn = '1 / -1';
+      }
+
+      const labelEl = document.createElement('div');
+      labelEl.className = 'label';
+      labelEl.textContent = label;
+
+      const valueEl = document.createElement('div');
+      valueEl.className = 'value';
+      valueEl.textContent = value;
+      if (fullWidth) {
+        valueEl.style.fontSize = '1.15rem';
+        valueEl.style.lineHeight = '1.3';
+      }
+
+      card.appendChild(labelEl);
+      card.appendChild(valueEl);
+      return card;
+    }
+
+    function renderStats(rows) {
+      const totalMinutes = rows.reduce((sum, row) => sum + (parseInt(row.duration, 10) || 0), 0);
+      const uniqueLocations = new Set(rows.map((row) => row.location).filter(Boolean)).size;
+      const nextSession = rows.length ? formatReadableDate(rows[0]) : '—';
+
+      statsEl.replaceChildren(
+        createStatCard('Visible sessions', String(rows.length), false),
+        createStatCard('Total minutes', String(totalMinutes), false),
+        createStatCard('Locations', String(uniqueLocations), false)
+      );
+
+      if (rows.length) {
+        statsEl.appendChild(createStatCard('Next session', nextSession, true));
+      }
+    }
+
+    function createMetaItem(label, value) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'meta-item';
+
+      const labelEl = document.createElement('div');
+      labelEl.className = 'k';
+      labelEl.textContent = label;
+
+      const valueEl = document.createElement('div');
+      valueEl.className = 'v';
+      valueEl.textContent = value;
+
+      wrapper.appendChild(labelEl);
+      wrapper.appendChild(valueEl);
+      return wrapper;
+    }
+
+    function createSessionCard(item) {
+      const article = document.createElement('article');
+      article.className = 'card';
+
+      const head = document.createElement('div');
+      head.className = 'card-head';
+
+      const left = document.createElement('div');
+      const location = document.createElement('div');
+      location.style.fontSize = '1.15rem';
+      location.style.fontWeight = '800';
+      location.textContent = item.location || 'Unknown location';
+
+      const timing = document.createElement('div');
+      timing.style.color = 'var(--muted)';
+      timing.style.marginTop = '6px';
+      timing.textContent = `${item.day || ''} · ${item.start || ''}–${item.end || ''}`;
+
+      left.appendChild(location);
+      left.appendChild(timing);
+
+      const pill = document.createElement('div');
+      pill.className = 'date-pill';
+      pill.textContent = formatReadableDate(item);
+
+      head.appendChild(left);
+      head.appendChild(pill);
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      meta.appendChild(createMetaItem('Court', item.court || '—'));
+      meta.appendChild(createMetaItem('Duration', `${item.duration || '—'} min`));
+
+      const notes = document.createElement('div');
+      notes.className = 'notes';
+      const strong = document.createElement('strong');
+      strong.textContent = 'Players / remarks:';
+      notes.appendChild(strong);
+      notes.appendChild(document.createElement('br'));
+      notes.appendChild(document.createTextNode(item.players || '—'));
+
+      article.appendChild(head);
+      article.appendChild(meta);
+      article.appendChild(notes);
+      return article;
+    }
+
+    function renderRows() {
+      const rows = getFilteredRows();
+      renderStats(rows);
+
+      if (!rows.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = 'No sessions match your current filters.';
+        contentEl.replaceChildren(empty);
+        return;
+      }
+
+      contentEl.replaceChildren(...rows.map(createSessionCard));
+    }
+
+    function populateLocations(rows) {
+      const previousValue = locationFilterEl.value;
+      const locations = Array.from(new Set(rows.map((row) => row.location).filter(Boolean))).sort((a, b) => a.localeCompare(b));
+      locationFilterEl.replaceChildren();
+
+      const allOption = document.createElement('option');
+      allOption.value = '';
+      allOption.textContent = 'All locations';
+      locationFilterEl.appendChild(allOption);
+
+      locations.forEach((loc) => {
+        const option = document.createElement('option');
+        option.value = loc;
+        option.textContent = loc;
+        locationFilterEl.appendChild(option);
+      });
+
+      if (locations.includes(previousValue)) {
+        locationFilterEl.value = previousValue;
+      }
+    }
+
+    function setRows(rows) {
+      allRows = rows.map(cleanRow).filter((item) => item.date && item.location);
+      populateLocations(allRows);
+      renderRows();
+    }
+
+    function loadFallback(message) {
+      showNotice(message);
+      setRows(fallbackRows);
+    }
+
+    async function fetchCsv(url) {
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          cache: 'no-store',
+          mode: 'cors'
+        });
+
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        return await response.text();
+      } catch (error) {
+        if (window.location.protocol === 'file:') {
+          throw new Error('This page is being opened as a local file. Many browsers restrict cross-origin requests from file:// pages. Host the HTML on a web server instead.');
+        }
+
+        if (error && error.message === 'Failed to fetch') {
+          throw new Error('The browser could not reach the Google Sheet CSV URL. The sheet may not be publicly accessible as CSV, the sheet tab gid may be wrong, or the preview environment may block cross-origin requests.');
+        }
+
+        throw error;
+      }
+    }
+
+    async function loadLiveData() {
+      const loading = document.createElement('div');
+      loading.className = 'loading';
+      loading.textContent = 'Loading schedule…';
+      contentEl.replaceChildren(loading);
+      hideNotice();
+
+      try {
+        const csvText = await fetchCsv(CSV_URL);
+        const rows = normaliseRowsFromCsv(csvText);
+
+        if (!rows.length) {
+          throw new Error('No rows were parsed from the sheet.');
+        }
+
+        setRows(rows);
+      } catch (error) {
+        loadFallback(`Live Google Sheet data could not be loaded here, so you are seeing embedded backup data instead. ${error.message}`);
+      }
+    }
+
+    function runTests() {
+      console.assert(typeof window.google === 'undefined' || typeof window.google === 'object', 'The page should not depend on google globals.');
+      console.assert(normaliseTime('6:30') === '06:30', 'normaliseTime should pad hours.');
+      console.assert(normaliseTime('19') === '19:00', 'normaliseTime should convert plain hours.');
+      console.assert(normaliseTime('6.5') === '06:30', 'normaliseTime should convert decimal times.');
+      console.assert(parseDate('18/04/2026', '6:30') instanceof Date, 'parseDate should return a Date for valid dd/mm/yyyy input.');
+      console.assert(CSV_URL.includes('export?format=csv&gid='), 'CSV_URL should use the Google Sheets CSV export format.');
+
+      const sampleCsv = 'Day,Date,Start Time,End Time,Duration (Min),Location,Court,Players Payment/Remarks\nSat,18/04/2026,6:30,8:30,120,Wadala,3,Test Player';
+      const parsedRows = normaliseRowsFromCsv(sampleCsv);
+      console.assert(parsedRows.length === 1, 'CSV parser should return one row for one data record.');
+      console.assert(parsedRows[0].location === 'Wadala', 'CSV parser should map the location column.');
+      console.assert(parsedRows[0].start === '06:30', 'CSV parser should normalize start time.');
+
+      const quotedCsv = 'Day,Date,Start Time,End Time,Duration (Min),Location,Court,Players Payment/Remarks\nSun,19/04/2026,20:00,21:30,90,Wadala,3,"AD, NMD, Sheldon"';
+      const quotedRows = normaliseRowsFromCsv(quotedCsv);
+      console.assert(quotedRows[0].players === 'AD, NMD, Sheldon', 'CSV parser should preserve commas inside quoted fields.');
+
+      const scriptish = '<' + '/script><script>alert("x")<' + '/script>';
+      const escapedHtml = escapeHtml(scriptish);
+      console.assert(escapedHtml.includes('&lt;/script&gt;'), 'escapeHtml should escape closing script tags safely.');
+
+      const multiLineCsv = 'Day,Date,Start Time,End Time,Duration (Min),Location,Court,Players Payment/Remarks\nSun,19/04/2026,20:00,21:30,90,Wadala,3,"Line 1\nLine 2"';
+      const multiLineRows = normaliseRowsFromCsv(multiLineCsv);
+      console.assert(multiLineRows[0].players === 'Line 1\nLine 2', 'CSV parser should preserve newlines inside quoted fields.');
+    }
+
+    searchInputEl.addEventListener('input', renderRows);
+    locationFilterEl.addEventListener('change', renderRows);
+    sortOrderEl.addEventListener('change', renderRows);
+    refreshBtnEl.addEventListener('click', loadLiveData);
+
+    runTests();
+    loadLiveData();
+  </script>
+</body>
+</html>
