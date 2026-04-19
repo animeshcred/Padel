@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Padel Past our Bedtime</title>
+  <title>Padel Schedule</title>
   <style>
     :root {
       --bg: #0b1020;
@@ -12,293 +12,178 @@
       --text: #eef2ff;
       --muted: #aab4d6;
       --accent: #78e08f;
-      --accent-2: #87cfff;
-      --border: rgba(255, 255, 255, 0.09);
-      --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      --border: rgba(255, 255, 255, 0.08);
+      --warn-bg: rgba(255, 212, 121, 0.08);
+      --warn-border: rgba(255, 212, 121, 0.25);
+      --warn-text: #ffe9b8;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: linear-gradient(180deg, #07101e 0%, #0b1020 100%);
+      font-family: system-ui, sans-serif;
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(rgba(6, 18, 20, 0.55), rgba(6, 18, 20, 0.55)),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Crect width='1600' height='900' fill='%231f7a5c'/%3E%3Crect x='140' y='90' width='1320' height='720' rx='18' ry='18' fill='none' stroke='rgba(255,255,255,0.95)' stroke-width='8'/%3E%3Cline x1='800' y1='90' x2='800' y2='810' stroke='rgba(255,255,255,0.95)' stroke-width='6'/%3E%3Cline x1='140' y1='450' x2='1460' y2='450' stroke='rgba(255,255,255,0.95)' stroke-width='6'/%3E%3Crect x='470' y='90' width='660' height='720' fill='none' stroke='rgba(255,255,255,0.95)' stroke-width='6'/%3E%3Crect x='140' y='250' width='1320' height='400' fill='none' stroke='rgba(255,255,255,0.95)' stroke-width='6'/%3E%3C/svg%3E");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
       color: var(--text);
     }
 
     .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 32px 20px 72px;
-    }
-
-    .hero {
-      display: grid;
-      gap: 16px;
-      padding: 28px;
-      border: 1px solid var(--border);
-      background: radial-gradient(circle at top right, rgba(135, 207, 255, 0.16), transparent 32%), var(--panel);
-      border-radius: 24px;
-      box-shadow: var(--shadow);
-    }
-
-    .eyebrow {
-      color: var(--accent);
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-size: 12px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(2rem, 4vw, 3.5rem);
-      line-height: 1.05;
-    }
-
-    .sub {
-      color: var(--muted);
-      margin: 0;
-      font-size: 1.05rem;
-      max-width: 70ch;
+      max-width: 1440px;
+      margin: auto;
+      padding: 24px;
     }
 
     .toolbar {
       display: grid;
-      grid-template-columns: 1.2fr 0.9fr 0.9fr auto;
-      gap: 12px;
-      margin-top: 24px;
-    }
-
-    @media (max-width: 800px) {
-      .toolbar {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    input,
-    select,
-    button {
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: var(--panel-2);
-      color: var(--text);
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #08111f;
-      font-weight: 800;
-      border: none;
-    }
-
-    .notice {
-      margin-top: 14px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      border: 1px solid rgba(255, 212, 121, 0.25);
-      background: rgba(255, 212, 121, 0.08);
-      color: #ffe9b8;
-      display: none;
-      line-height: 1.5;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      margin: 24px 0;
-    }
-
-    @media (max-width: 700px) {
-      .stats {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .stat {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 18px;
-    }
-
-    .stat .label {
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin-bottom: 10px;
-    }
-
-    .stat .value {
-      font-size: 1.8rem;
-      font-weight: 800;
-    }
-
-    .section-title {
-      margin: 34px 0 16px;
-      font-size: 1.2rem;
-      color: var(--text);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    @media (max-width: 860px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    .card-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
+      grid-template-columns: 1.2fr 1fr 1fr auto;
+      gap: 10px;
       margin-bottom: 14px;
     }
 
-    .date-pill {
-      background: rgba(120, 224, 143, 0.14);
-      color: #baffcb;
-      border: 1px solid rgba(120, 224, 143, 0.2);
-      padding: 8px 10px;
-      border-radius: 999px;
-      font-size: 0.86rem;
+    @media (max-width: 800px) {
+      .toolbar { grid-template-columns: 1fr; }
+    }
+
+    input, select, button {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      min-width: 0;
+    }
+
+    button {
+      background: var(--accent);
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .notice {
+      display: none;
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      color: var(--warn-text);
+      line-height: 1.5;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(18, 25, 51, 0.92);
+      backdrop-filter: blur(3px);
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    table {
+      width: max-content;
+      border-collapse: collapse;
+      background: transparent;
+      table-layout: auto;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
       white-space: nowrap;
     }
 
-    .meta {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin: 14px 0 10px;
+    th {
+      position: sticky;
+      top: 0;
+      background: rgba(26, 35, 69, 0.96);
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      text-align: center;
     }
 
-    .meta-item {
-      background: rgba(255, 255, 255, 0.03);
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .loading, .empty {
+      padding: 20px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(18, 25, 51, 0.92);
+      border-radius: 10px;
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
+      width: fit-content;
+      margin: 0 auto;
     }
 
-    .meta-item .k {
-      color: var(--muted);
-      font-size: 0.8rem;
-      margin-bottom: 4px;
-    }
-
-    .meta-item .v {
-      font-weight: 700;
-    }
-
-    .notes {
-      margin-top: 12px;
-      color: #dbe3ff;
-      line-height: 1.5;
-      white-space: pre-line;
-    }
-
-    .empty,
-    .loading {
-      padding: 24px;
-      background: var(--panel);
-      border-radius: 18px;
-      border: 1px dashed var(--border);
-      color: var(--muted);
-    }
-
-    .footer {
-      margin-top: 28px;
-      color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.6;
-    }
-
-    code {
-      background: rgba(255, 255, 255, 0.06);
-      padding: 2px 6px;
-      border-radius: 8px;
+    td.duration-cell,
+    th.duration-col,
+    td.location-cell,
+    th.location-col,
+    td.court-cell,
+    th.court-col {
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <section class="hero">
-      <div class="eyebrow">Live from Google Sheets</div>
-      <h1>Padel Past our Bedtime</h1>
-      <p class="sub">A clean public schedule page powered by your Google Sheet. Update the sheet, refresh the page, and the latest sessions appear automatically.</p>
 
-      <div class="toolbar">
-        <input id="searchInput" type="text" placeholder="Search by player, remark, day, or court" />
-        <select id="locationFilter">
-          <option value="">All locations</option>
-        </select>
-        <select id="sortOrder">
-          <option value="asc">Earliest first</option>
-          <option value="desc">Latest first</option>
-        </select>
-        <button id="refreshBtn" type="button">Refresh</button>
-      </div>
+    <div class="toolbar">
+      <input id="searchInput" placeholder="Search players, day, date, duration, location, court..." />
+      <select id="locationFilter"><option value="">All Locations</option></select>
+      <select id="sortOrder">
+        <option value="asc">Earliest</option>
+        <option value="desc">Latest</option>
+      </select>
+      <button id="refreshBtn" type="button">Refresh</button>
+    </div>
 
-      <div class="notice" id="notice"></div>
-    </section>
-
-    <section class="stats" id="stats"></section>
-
-    <h2 class="section-title">Sessions</h2>
-    <div id="content" class="grid"></div>
-
-    <p class="footer">
-      This page loads Google Sheets data without external JS libraries. If live loading fails in a sandbox or local file preview, it falls back to embedded backup data.
-    </p>
+    <div id="notice" class="notice"></div>
+    <div id="content"></div>
   </div>
 
   <script>
     const SHEET_ID = '1h3ZnjMmwfC_jlLAto90GMuPkl4yQ5lfaQ7U4P1JtSfU';
-    const SHEET_GID = '0';
     const SHEET_NAME = 'Tab';
+    const SHEET_GID = '0';
     const CSV_URLS = [
-      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`,
-      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=${encodeURIComponent(SHEET_NAME)}`,
-      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`
+      'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(SHEET_NAME),
+      'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&sheet=' + encodeURIComponent(SHEET_NAME),
+      'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=' + SHEET_GID
     ];
 
     const fallbackRows = [
-      { day: 'Sat', date: '18/04/2026', start: '6:30', end: '8:30', duration: '120', location: 'Wadala', court: '3 Men Americano', players: 'Yogesh & Sahil to book other courts. Gautam Dubai to pay me 1200.' },
-      { day: 'Sun', date: '19/04/2026', start: '20:00', end: '21:30', duration: '90', location: 'Wadala', court: '3', players: 'AD + NMD + Sheldon + Rohit Ramaswamy' },
-      { day: 'Wed', date: '22/04/2026', start: '19:00', end: '20:30', duration: '90', location: 'Wadala', court: '3', players: 'AD + Aman Makan + Dinesh + Advait' },
-      { day: 'Thu', date: '23/04/2026', start: '19:00', end: '20:30', duration: '90', location: 'Wadala', court: '3', players: 'AD + NMD + Sonia +' },
+      { day: 'Sat', date: '18/04/2026', start: '06:30', end: '08:30', duration: '120', location: 'Wadala', court: '3 Men Americano', players: 'Yogesh, Sahil, Gautam Dubai' },
+      { day: 'Sun', date: '19/04/2026', start: '20:00', end: '21:30', duration: '90', location: 'Wadala', court: '3', players: 'AD, NMD, Sheldon, Rohit Ramaswamy' },
+      { day: 'Wed', date: '22/04/2026', start: '19:00', end: '20:30', duration: '90', location: 'Wadala', court: '3', players: 'AD, Aman Makan, Dinesh, Advait' },
+      { day: 'Thu', date: '23/04/2026', start: '19:00', end: '20:30', duration: '90', location: 'Wadala', court: '3', players: 'AD, NMD, Sonia' },
       { day: 'Fri', date: '24/04/2026', start: '18:00', end: '20:00', duration: '120', location: 'Wadala', court: '4', players: 'Women Americano' },
-      { day: 'Sat', date: '25/04/2026', start: '6:30', end: '8:00', duration: '90', location: 'Wadala', court: '3', players: 'AD +' },
+      { day: 'Sat', date: '25/04/2026', start: '06:30', end: '08:00', duration: '90', location: 'Wadala', court: '3', players: 'AD' },
       { day: 'Sun', date: '26/04/2026', start: '18:00', end: '19:30', duration: '90', location: 'Wadala', court: '3', players: '' }
     ];
 
     const contentEl = document.getElementById('content');
-    const statsEl = document.getElementById('stats');
-    const locationFilterEl = document.getElementById('locationFilter');
-    const sortOrderEl = document.getElementById('sortOrder');
-    const searchInputEl = document.getElementById('searchInput');
-    const refreshBtnEl = document.getElementById('refreshBtn');
     const noticeEl = document.getElementById('notice');
+    const searchInput = document.getElementById('searchInput');
+    const locationFilter = document.getElementById('locationFilter');
+    const sortOrder = document.getElementById('sortOrder');
+    const refreshBtn = document.getElementById('refreshBtn');
 
-    let allRows = [];
+    let data = [];
 
     function showNotice(message) {
       noticeEl.textContent = message;
@@ -306,81 +191,11 @@
     }
 
     function hideNotice() {
-      noticeEl.style.display = 'none';
       noticeEl.textContent = '';
+      noticeEl.style.display = 'none';
     }
 
-    function escapeHtml(value) {
-      return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-
-    function normaliseTime(value) {
-      if (value === null || value === undefined || value === '') return '00:00';
-      const str = String(value).trim();
-
-      if (/^\d{1,2}:\d{2}$/.test(str)) {
-        const parts = str.split(':');
-        return `${parts[0].padStart(2, '0')}:${parts[1]}`;
-      }
-
-      if (/^\d{1,2}\.\d+$/.test(str)) {
-        const n = Number(str);
-        const hours = Math.floor(n);
-        const minutes = Math.round((n - hours) * 60);
-        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-      }
-
-      if (/^\d{1,2}$/.test(str)) {
-        return `${str.padStart(2, '0')}:00`;
-      }
-
-      return str;
-    }
-
-    function parseDate(dateStr, timeStr) {
-      if (!dateStr) return null;
-      const cleanDate = String(dateStr).trim().replace(/\s+/g, '');
-      const match = cleanDate.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-      if (!match) return null;
-
-      const dd = match[1];
-      const mm = match[2];
-      const yyyy = match[3];
-      const normalisedTime = normaliseTime(timeStr || '00:00');
-      const date = new Date(`${yyyy}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}T${normalisedTime}:00`);
-      return Number.isNaN(date.getTime()) ? null : date;
-    }
-
-    function formatReadableDate(item) {
-      const d = parseDate(item.date, item.start);
-      if (!d) return `${item.day} ${item.date}`.trim();
-      return d.toLocaleDateString(undefined, {
-        weekday: 'short',
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric'
-      });
-    }
-
-    function cleanRow(row) {
-      return {
-        day: String(row.day || '').trim(),
-        date: String(row.date || '').trim(),
-        start: normaliseTime(row.start || ''),
-        end: normaliseTime(row.end || ''),
-        duration: String(row.duration || '').trim(),
-        location: String(row.location || '').trim(),
-        court: String(row.court || '').trim(),
-        players: String(row.players || '').trim()
-      };
-    }
-
-    function parseCsv(text) {
+    function parseCSV(text) {
       const rows = [];
       let row = [];
       let cell = '';
@@ -401,7 +216,9 @@
           row.push(cell);
           cell = '';
         } else if ((char === '\n' || char === '\r') && !inQuotes) {
-          if (char === '\r' && next === '\n') i += 1;
+          if (char === '\r' && next === '\n') {
+            i += 1;
+          }
           row.push(cell);
           rows.push(row);
           row = [];
@@ -419,315 +236,350 @@
       return rows;
     }
 
+    function normaliseTime(value) {
+      if (value === null || value === undefined || value === '') {
+        return '';
+      }
+      const str = String(value).trim();
+      if (/^\d{1,2}:\d{2}$/.test(str)) {
+        const parts = str.split(':');
+        return parts[0].padStart(2, '0') + ':' + parts[1];
+      }
+      if (/^\d{1,2}$/.test(str)) {
+        return str.padStart(2, '0') + ':00';
+      }
+      return str;
+    }
+
+    function isValidSheetDate(value) {
+      return /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(String(value || '').trim());
+    }
+
+    function formatShortDate(value) {
+      if (!isValidSheetDate(value)) {
+        return value || '';
+      }
+      const parts = String(value).trim().split('/');
+      const day = parts[0].padStart(2, '0');
+      const monthIndex = parseInt(parts[1], 10) - 1;
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const month = months[monthIndex] || parts[1];
+      return day + '-' + month;
+    }
+
+    function parseDateValue(dateStr, timeStr) {
+      if (!isValidSheetDate(dateStr)) {
+        return null;
+      }
+      const match = String(dateStr).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (!match) {
+        return null;
+      }
+      const dd = match[1];
+      const mm = match[2];
+      const yyyy = match[3];
+      const time = normaliseTime(timeStr || '00:00') || '00:00';
+      const iso = yyyy + '-' + mm.padStart(2, '0') + '-' + dd.padStart(2, '0') + 'T' + time + ':00';
+      const date = new Date(iso);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
     function headerIndexMap(headers) {
       const map = {};
-      headers.forEach((header, index) => {
+      headers.forEach(function(header, index) {
         map[String(header || '').trim().toLowerCase()] = index;
       });
       return map;
     }
 
-    function getCellByHeader(row, map, headerNames) {
-      for (let i = 0; i < headerNames.length; i += 1) {
-        const index = map[headerNames[i]];
-        if (index !== undefined) {
-          return row[index] || '';
+    function normalizeHeaderValue(value) {
+      return String(value || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
+    }
+
+    function getCell(row, map, keys) {
+      for (let i = 0; i < keys.length; i += 1) {
+        const idx = map[keys[i]];
+        if (idx !== undefined) {
+          return row[idx] || '';
         }
       }
+
+      const mapKeys = Object.keys(map);
+      for (let i = 0; i < keys.length; i += 1) {
+        const normalizedKey = normalizeHeaderValue(keys[i]);
+        const found = mapKeys.find(function(k) {
+          const normalizedHeader = normalizeHeaderValue(k);
+          return normalizedHeader.includes(normalizedKey) || normalizedKey.includes(normalizedHeader);
+        });
+        if (found) {
+          const idx = map[found];
+          return row[idx] || '';
+        }
+      }
+
       return '';
     }
 
-    function normaliseRowsFromCsv(csvText) {
-      const table = parseCsv(csvText);
-      if (!table.length) return [];
-
-      const headers = table[0];
-      const map = headerIndexMap(headers);
-
-      return table
-        .slice(1)
-        .filter((row) => row.some((cell) => String(cell || '').trim()))
-        .map((row) => ({
-          day: getCellByHeader(row, map, ['day']),
-          date: getCellByHeader(row, map, ['date']),
-          start: getCellByHeader(row, map, ['start time', 'start']),
-          end: getCellByHeader(row, map, ['end time', 'end']),
-          duration: getCellByHeader(row, map, ['duration (min)', 'duration']),
-          location: getCellByHeader(row, map, ['location']),
-          court: getCellByHeader(row, map, ['court']),
-          players: getCellByHeader(row, map, ['players payment/remarks', 'players', 'remarks'])
-        }))
-        .map(cleanRow)
-        .filter((item) => item.date && item.location);
+    function sanitizePlayers(value) {
+      return String(value || '').trim();
     }
 
-    function getFilteredRows() {
-      const search = searchInputEl.value.trim().toLowerCase();
-      const location = locationFilterEl.value;
-      const sortOrder = sortOrderEl.value;
-
-      const rows = allRows.filter((item) => {
-        const haystack = [item.day, item.date, item.start, item.end, item.duration, item.location, item.court, item.players]
-          .join(' ')
-          .toLowerCase();
-        const matchesSearch = !search || haystack.includes(search);
-        const matchesLocation = !location || item.location === location;
-        return matchesSearch && matchesLocation;
-      });
-
-      rows.sort((a, b) => {
-        const da = parseDate(a.date, a.start);
-        const db = parseDate(b.date, b.start);
-        const ta = da ? da.getTime() : 0;
-        const tb = db ? db.getTime() : 0;
-        return sortOrder === 'asc' ? ta - tb : tb - ta;
-      });
-
-      return rows;
+    function compactPlayers(values) {
+      return values
+        .map(function(value) { return String(value || '').trim(); })
+        .filter(Boolean)
+        .join(', ');
     }
 
-    function createStatCard(label, value, fullWidth) {
-      const card = document.createElement('div');
-      card.className = 'stat';
-      if (fullWidth) {
-        card.style.gridColumn = '1 / -1';
-      }
-
-      const labelEl = document.createElement('div');
-      labelEl.className = 'label';
-      labelEl.textContent = label;
-
-      const valueEl = document.createElement('div');
-      valueEl.className = 'value';
-      valueEl.textContent = value;
-      if (fullWidth) {
-        valueEl.style.fontSize = '1.15rem';
-        valueEl.style.lineHeight = '1.3';
-      }
-
-      card.appendChild(labelEl);
-      card.appendChild(valueEl);
-      return card;
-    }
-
-    function renderStats(rows) {
-      const totalMinutes = rows.reduce((sum, row) => sum + (parseInt(row.duration, 10) || 0), 0);
-      const uniqueLocations = new Set(rows.map((row) => row.location).filter(Boolean)).size;
-      const nextSession = rows.length ? formatReadableDate(rows[0]) : '—';
-
-      statsEl.replaceChildren(
-        createStatCard('Visible sessions', String(rows.length), false),
-        createStatCard('Total minutes', String(totalMinutes), false),
-        createStatCard('Locations', String(uniqueLocations), false)
-      );
-
-      if (rows.length) {
-        statsEl.appendChild(createStatCard('Next session', nextSession, true));
-      }
-    }
-
-    function createMetaItem(label, value) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'meta-item';
-
-      const labelEl = document.createElement('div');
-      labelEl.className = 'k';
-      labelEl.textContent = label;
-
-      const valueEl = document.createElement('div');
-      valueEl.className = 'v';
-      valueEl.textContent = value;
-
-      wrapper.appendChild(labelEl);
-      wrapper.appendChild(valueEl);
-      return wrapper;
-    }
-
-    function createSessionCard(item) {
-      const article = document.createElement('article');
-      article.className = 'card';
-
-      const head = document.createElement('div');
-      head.className = 'card-head';
-
-      const left = document.createElement('div');
-      const location = document.createElement('div');
-      location.style.fontSize = '1.15rem';
-      location.style.fontWeight = '800';
-      location.textContent = item.location || 'Unknown location';
-
-      const timing = document.createElement('div');
-      timing.style.color = 'var(--muted)';
-      timing.style.marginTop = '6px';
-      timing.textContent = `${item.day || ''} · ${item.start || ''}–${item.end || ''}`;
-
-      left.appendChild(location);
-      left.appendChild(timing);
-
-      const pill = document.createElement('div');
-      pill.className = 'date-pill';
-      pill.textContent = formatReadableDate(item);
-
-      head.appendChild(left);
-      head.appendChild(pill);
-
-      const meta = document.createElement('div');
-      meta.className = 'meta';
-      meta.appendChild(createMetaItem('Court', item.court || '—'));
-      meta.appendChild(createMetaItem('Duration', `${item.duration || '—'} min`));
-
-      const notes = document.createElement('div');
-      notes.className = 'notes';
-      const strong = document.createElement('strong');
-      strong.textContent = 'Players / remarks:';
-      notes.appendChild(strong);
-      notes.appendChild(document.createElement('br'));
-      notes.appendChild(document.createTextNode(item.players || '—'));
-
-      article.appendChild(head);
-      article.appendChild(meta);
-      article.appendChild(notes);
-      return article;
-    }
-
-    function renderRows() {
-      const rows = getFilteredRows();
-      renderStats(rows);
-
+    function rowsFromCsv(text) {
+      const rows = parseCSV(text);
       if (!rows.length) {
-        const empty = document.createElement('div');
-        empty.className = 'empty';
-        empty.textContent = 'No sessions match your current filters.';
-        contentEl.replaceChildren(empty);
-        return;
+        return [];
       }
 
-      contentEl.replaceChildren(...rows.map(createSessionCard));
-    }
+      const headers = headerIndexMap(rows[0]);
+      return rows.slice(1)
+        .filter(function(row) {
+          return row.some(function(cell) { return String(cell || '').trim(); });
+        })
+        .map(function(row) {
+          const player1 = getCell(row, headers, ['player 1', 'player1']);
+          const player2 = getCell(row, headers, ['player 2', 'player2']);
+          const player3 = getCell(row, headers, ['player 3', 'player3']);
+          const player4 = getCell(row, headers, ['player 4', 'player4']);
+          const combinedPlayers = getCell(row, headers, ['players', 'player names']);
+          const players = compactPlayers([player1, player2, player3, player4]) || sanitizePlayers(combinedPlayers);
 
-    function populateLocations(rows) {
-      const previousValue = locationFilterEl.value;
-      const locations = Array.from(new Set(rows.map((row) => row.location).filter(Boolean))).sort((a, b) => a.localeCompare(b));
-      locationFilterEl.replaceChildren();
-
-      const allOption = document.createElement('option');
-      allOption.value = '';
-      allOption.textContent = 'All locations';
-      locationFilterEl.appendChild(allOption);
-
-      locations.forEach((loc) => {
-        const option = document.createElement('option');
-        option.value = loc;
-        option.textContent = loc;
-        locationFilterEl.appendChild(option);
-      });
-
-      if (locations.includes(previousValue)) {
-        locationFilterEl.value = previousValue;
-      }
-    }
-
-    function setRows(rows) {
-      allRows = rows.map(cleanRow).filter((item) => item.date && item.location);
-      populateLocations(allRows);
-      renderRows();
-    }
-
-    function loadFallback(message) {
-      showNotice(message);
-      setRows(fallbackRows);
+          return {
+            day: getCell(row, headers, ['day']),
+            date: getCell(row, headers, ['date']),
+            start: normaliseTime(getCell(row, headers, ['start time', 'start'])),
+            end: normaliseTime(getCell(row, headers, ['end time', 'end'])),
+            duration: getCell(row, headers, ['duration (min)', 'duration']),
+            location: getCell(row, headers, ['location']),
+            court: getCell(row, headers, ['court']),
+            players: players
+          };
+        })
+        .filter(function(row) {
+          return isValidSheetDate(row.date);
+        });
     }
 
     async function fetchCsv(url) {
-      const response = await fetch(url, {
-        method: 'GET',
-        cache: 'no-store',
-        mode: 'cors'
-      });
-
+      const response = await fetch(url, { method: 'GET', cache: 'no-store', mode: 'cors' });
       if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
+        throw new Error('Request failed with status ' + response.status);
       }
-
       return await response.text();
     }
 
     async function fetchFirstWorkingCsv(urls) {
       const errors = [];
-
-      for (const url of urls) {
+      for (let i = 0; i < urls.length; i += 1) {
         try {
-          const text = await fetchCsv(url);
-          return { text, url };
+          return await fetchCsv(urls[i]);
         } catch (error) {
-          errors.push(`${url} -> ${error.message}`);
+          errors.push(error.message);
         }
       }
-
       if (window.location.protocol === 'file:') {
-        throw new Error('This page is being opened as a local file. Many browsers restrict cross-origin requests from file:// pages. Host the HTML on a web server instead.');
+        throw new Error('This page is opened as a local file. Open it from GitHub Pages, Vercel, Netlify, or a local web server.');
       }
-
-      throw new Error(`Tried ${urls.length} Google Sheets CSV endpoints and none worked. ${errors.join(' | ')}`);
+      throw new Error(errors.join(' | '));
     }
 
-    async function loadLiveData() {
-      const loading = document.createElement('div');
-      loading.className = 'loading';
-      loading.textContent = 'Loading schedule…';
-      contentEl.replaceChildren(loading);
-      hideNotice();
+    function setLoading(message) {
+      const div = document.createElement('div');
+      div.className = 'loading';
+      div.textContent = message;
+      contentEl.replaceChildren(div);
+    }
 
-      try {
-        const { text: csvText } = await fetchFirstWorkingCsv(CSV_URLS);
-        const rows = normaliseRowsFromCsv(csvText);
+    function setEmpty(message) {
+      const div = document.createElement('div');
+      div.className = 'empty';
+      div.textContent = message;
+      contentEl.replaceChildren(div);
+    }
 
-        if (!rows.length) {
-          throw new Error('No rows were parsed from the sheet.');
-        }
+    function populateLocations() {
+      const previousValue = locationFilter.value;
+      const locations = Array.from(new Set(data.map(function(item) {
+        return item.location;
+      }).filter(Boolean))).sort(function(a, b) {
+        return a.localeCompare(b);
+      });
 
-        setRows(rows);
-      } catch (error) {
-        loadFallback(`Live Google Sheet data could not be loaded here, so you are seeing embedded backup data instead. ${error.message}`);
+      locationFilter.replaceChildren();
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = 'All Locations';
+      locationFilter.appendChild(defaultOption);
+
+      locations.forEach(function(location) {
+        const option = document.createElement('option');
+        option.value = location;
+        option.textContent = location;
+        locationFilter.appendChild(option);
+      });
+
+      if (locations.includes(previousValue)) {
+        locationFilter.value = previousValue;
       }
+    }
+
+    function buildTable(rows) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'table-wrap';
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const tbody = document.createElement('tbody');
+      const headerRow = document.createElement('tr');
+      const headers = ['Day', 'Date', 'Time', 'Duration', 'Location', 'Court', 'Players'];
+
+      headers.forEach(function(label) {
+        const th = document.createElement('th');
+        if (label === 'Duration') {
+          th.className = 'duration-col';
+        }
+        if (label === 'Location') {
+          th.className = 'location-col';
+        }
+        if (label === 'Court') {
+          th.className = 'court-col';
+        }
+        th.textContent = label;
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+
+      rows.forEach(function(item) {
+        const tr = document.createElement('tr');
+
+        const dayTd = document.createElement('td');
+        dayTd.textContent = item.day || '';
+        tr.appendChild(dayTd);
+
+        const dateTd = document.createElement('td');
+        dateTd.textContent = formatShortDate(item.date);
+        tr.appendChild(dateTd);
+
+        const timeTd = document.createElement('td');
+        const start = item.start || '';
+        const end = item.end || '';
+        timeTd.textContent = start && end ? start + ' - ' + end : (start || end);
+        tr.appendChild(timeTd);
+
+        const durationTd = document.createElement('td');
+        durationTd.className = 'duration-cell';
+        durationTd.textContent = item.duration || '';
+        tr.appendChild(durationTd);
+
+        const locationTd = document.createElement('td');
+        locationTd.className = 'location-cell';
+        locationTd.textContent = item.location || '';
+        tr.appendChild(locationTd);
+
+        const courtTd = document.createElement('td');
+        courtTd.className = 'court-cell';
+        courtTd.textContent = item.court || '';
+        tr.appendChild(courtTd);
+
+        const playersTd = document.createElement('td');
+        playersTd.textContent = item.players || '';
+        tr.appendChild(playersTd);
+
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      wrapper.appendChild(table);
+      return wrapper;
+    }
+
+    function render() {
+      const search = searchInput.value.trim().toLowerCase();
+      const selectedLocation = locationFilter.value;
+
+      const filtered = data
+        .filter(function(item) {
+          const haystack = [item.day, item.date, item.start, item.end, item.duration, item.location, item.court, item.players].join(' ').toLowerCase();
+          return (!search || haystack.includes(search)) && (!selectedLocation || item.location === selectedLocation);
+        })
+        .sort(function(a, b) {
+          const ta = (parseDateValue(a.date, a.start) || new Date(0)).getTime();
+          const tb = (parseDateValue(b.date, b.start) || new Date(0)).getTime();
+          return sortOrder.value === 'asc' ? ta - tb : tb - ta;
+        });
+
+      if (!filtered.length) {
+        setEmpty('No data found for the selected filters.');
+        return;
+      }
+
+      contentEl.replaceChildren(buildTable(filtered));
+    }
+
+    async function loadData() {
+      setLoading('Loading schedule...');
+      hideNotice();
+      try {
+        const csvText = await fetchFirstWorkingCsv(CSV_URLS);
+        const liveRows = rowsFromCsv(csvText);
+        if (!liveRows.length) {
+          throw new Error('The sheet loaded but no valid dated rows were parsed.');
+        }
+        data = liveRows;
+      } catch (error) {
+        data = fallbackRows;
+        showNotice('Live Google Sheet data could not be loaded, so backup data is being shown instead. ' + error.message);
+      }
+      populateLocations();
+      render();
     }
 
     function runTests() {
-      console.assert(typeof window.google === 'undefined' || typeof window.google === 'object', 'The page should not depend on google globals.');
-      console.assert(normaliseTime('6:30') === '06:30', 'normaliseTime should pad hours.');
-      console.assert(normaliseTime('19') === '19:00', 'normaliseTime should convert plain hours.');
-      console.assert(normaliseTime('6.5') === '06:30', 'normaliseTime should convert decimal times.');
-      console.assert(parseDate('18/04/2026', '6:30') instanceof Date, 'parseDate should return a Date for valid dd/mm/yyyy input.');
-      console.assert(Array.isArray(CSV_URLS) && CSV_URLS.length === 3, 'CSV_URLS should define three fallback Google Sheets endpoints.');
-      console.assert(CSV_URLS[0].includes('gviz/tq?tqx=out:csv&sheet='), 'First URL should target the sheet by name through gviz CSV output.');
-      console.assert(CSV_URLS[2].includes('export?format=csv&gid='), 'Last URL should fall back to gid-based CSV export.');
+      const sampleCsv1 = ['a,b', '1,2'].join('\n');
+      const sampleCsv2 = ['a,b', '"x,y",2'].join('\n');
+      const sampleCsv3 = ['Day,Date,Start Time,End Time,Duration (min),Location,Court,Players', 'Sat,18/04/2026,6:30,8:30,120,Wadala,3,"AD, NMD, Sheldon, Rohit Ramaswamy"'].join('\n');
+      const sampleCsv4 = ['Day,Date,Start (IST),End (IST),Duration,Location,Court,Players', 'Sat,18/04/2026,6:30,8:30,120,Wadala,3,AD + NMD + Sheldon + Rohit'].join('\n');
+      const sampleCsv5 = ['Day,Date,Start Time,End Time,Duration,Location,Court,Players', 'Sun,,20:00,21:30,90,Wadala,3,AD'].join('\n');
+      const sampleCsv6 = ['Day,Date,Start Time,End Time,Duration,Location,Court,Players', 'Sat,0,20:00,21:30,90,Wadala,3,AD'].join('\n');
+      const sampleCsv7 = ['Day,Date,Start Time,End Time,Duration,Location,Court,Player 1,Player 2,Player 3,Player 4,Remarks', 'Sun,19/04/2026,20:00,21:30,90,Wadala,3,AD,NMD,Sheldon,Rohit,Payment pending'].join('\n');
+      const sampleCsv8 = ['Day,Date,Start Time,End Time,Duration,Location,Court,Remarks', 'Sun,19/04/2026,20:00,21:30,90,Wadala,3,Payment pending'].join('\n');
+      const sampleCsv9 = ['Day,Date,Start Time,End Time,Duration,Location,Court,Player 1,Player 2,Player 3,Player 4', 'Sun,19/04/2026,20:00,21:30,90,Wadala,3,AD,NMD,Sheldon,Rohit'].join('\n');
 
-      const sampleCsv = 'Day,Date,Start Time,End Time,Duration (Min),Location,Court,Players Payment/Remarks\nSat,18/04/2026,6:30,8:30,120,Wadala,3,Test Player';
-      const parsedRows = normaliseRowsFromCsv(sampleCsv);
-      console.assert(parsedRows.length === 1, 'CSV parser should return one row for one data record.');
-      console.assert(parsedRows[0].location === 'Wadala', 'CSV parser should map the location column.');
-      console.assert(parsedRows[0].start === '06:30', 'CSV parser should normalize start time.');
-
-      const quotedCsv = 'Day,Date,Start Time,End Time,Duration (Min),Location,Court,Players Payment/Remarks\nSun,19/04/2026,20:00,21:30,90,Wadala,3,"AD, NMD, Sheldon"';
-      const quotedRows = normaliseRowsFromCsv(quotedCsv);
-      console.assert(quotedRows[0].players === 'AD, NMD, Sheldon', 'CSV parser should preserve commas inside quoted fields.');
-
-      const scriptish = '<' + '/script><script>alert("x")<' + '/script>';
-      const escapedHtml = escapeHtml(scriptish);
-      console.assert(escapedHtml.includes('&lt;/script&gt;'), 'escapeHtml should escape closing script tags safely.');
-
-      const multiLineCsv = 'Day,Date,Start Time,End Time,Duration (Min),Location,Court,Players Payment/Remarks\nSun,19/04/2026,20:00,21:30,90,Wadala,3,"Line 1\nLine 2"';
-      const multiLineRows = normaliseRowsFromCsv(multiLineCsv);
-      console.assert(multiLineRows[0].players === 'Line 1\nLine 2', 'CSV parser should preserve newlines inside quoted fields.');
+      console.assert(Array.isArray(CSV_URLS) && CSV_URLS.length === 3, 'Should define 3 fallback CSV URLs.');
+      console.assert(parseCSV(sampleCsv1).length === 2, 'Basic CSV parsing should work.');
+      console.assert(parseCSV(sampleCsv2)[1][0] === 'x,y', 'CSV parser should preserve commas in quotes.');
+      console.assert(normaliseTime('6:30') === '06:30', 'Time should be padded.');
+      console.assert(normaliseTime('6') === '06:00', 'Hour-only values should become HH:00.');
+      console.assert(isValidSheetDate('18/04/2026') === true, 'Valid dd/mm/yyyy dates should be accepted.');
+      console.assert(isValidSheetDate('0') === false, 'Invalid date values like 0 should be rejected.');
+      console.assert(formatShortDate('18/04/2026') === '18-Apr', 'Dates should be shown in dd-mmm format.');
+      console.assert(parseDateValue('18/04/2026', '06:30') instanceof Date, 'Date parser should return Date objects.');
+      console.assert(sanitizePlayers('AD, NMD, Sheldon, Rohit Ramaswamy') === 'AD, NMD, Sheldon, Rohit Ramaswamy', 'Combined Players text should be preserved.');
+      console.assert(compactPlayers(['AD', 'NMD', 'Sheldon', 'Rohit']) === 'AD, NMD, Sheldon, Rohit', 'Separate player columns should combine into one Players column.');
+      console.assert(rowsFromCsv(sampleCsv3)[0].players === 'AD, NMD, Sheldon, Rohit Ramaswamy', 'A real Players column should populate Players.');
+      console.assert(rowsFromCsv(sampleCsv4)[0].players === 'AD + NMD + Sheldon + Rohit', 'Combined Players text should be shown exactly as written.');
+      console.assert(rowsFromCsv(sampleCsv7)[0].players === 'AD, NMD, Sheldon, Rohit', 'Player 1 to Player 4 columns should populate Players while ignoring Remarks.');
+      console.assert(rowsFromCsv(sampleCsv8)[0].players === '', 'Remarks alone should not populate Players.');
+      console.assert(rowsFromCsv(sampleCsv9)[0].players === 'AD, NMD, Sheldon, Rohit', 'Four separate player columns should combine correctly.');
+      console.assert(rowsFromCsv(sampleCsv5).length === 0, 'Rows without dates should be excluded.');
+      console.assert(rowsFromCsv(sampleCsv6).length === 0, 'Rows with invalid date values should be excluded.');
+      console.assert(buildTable([{ day: 'Sat', date: '18/04/2026', start: '06:30', end: '08:30', duration: '120', location: 'Wadala', court: '3', players: 'AD, NMD, Sheldon, Rohit' }]).querySelectorAll('tbody tr').length === 1, 'Table builder should render one row.');
+      console.assert(buildTable([{ day: 'Sat', date: '18/04/2026', start: '06:30', end: '08:30', duration: '120', location: 'Wadala', court: '3', players: 'AD, NMD, Sheldon, Rohit' }]).querySelectorAll('thead th').length === 7, 'Table should render 7 columns including a single Players column.');
     }
 
-    searchInputEl.addEventListener('input', renderRows);
-    locationFilterEl.addEventListener('change', renderRows);
-    sortOrderEl.addEventListener('change', renderRows);
-    refreshBtnEl.addEventListener('click', loadLiveData);
+    searchInput.addEventListener('input', render);
+    locationFilter.addEventListener('change', render);
+    sortOrder.addEventListener('change', render);
+    refreshBtn.addEventListener('click', loadData);
 
     runTests();
-    loadLiveData();
+    loadData();
   </script>
 </body>
 </html>
