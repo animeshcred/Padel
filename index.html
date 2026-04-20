@@ -1085,6 +1085,96 @@ table td:last-child, table th:last-child { text-align:left !important; }
     padding-bottom: 10px !important;
   }
 }
+
+/* Ultra compact mobile - single card feel */
+@media (max-width: 700px){
+  .next-game-banner{
+    padding: 8px 8px !important;
+    border-radius: 12px !important;
+  }
+
+  .next-game-main{
+    gap: 4px !important;
+  }
+
+  .flip-clock{
+    gap: 4px !important;
+  }
+
+  .flip-unit{
+    gap: 2px !important;
+  }
+
+  .flip-card{
+    width: 46px !important;
+    height: 54px !important;
+  }
+
+  .flip-value{
+    font-size: 1.1rem !important;
+  }
+
+  #searchInput{
+    height: 48px !important;
+    line-height: 48px !important;
+    font-size: 0.85rem !important;
+    border-radius: 10px !important;
+  }
+}
+
+/* Aggressive mobile spacing fix */
+@media (max-width: 700px){
+  .next-game-main{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:2px !important;
+  }
+
+  #nextGameCountdown,
+  .flip-clock{
+    margin:0 !important;
+    padding:0 !important;
+  }
+
+  .flip-unit{
+    margin:0 !important;
+  }
+
+  .search-center{
+    margin-top:2px !important;
+    padding:0 !important;
+  }
+
+  #searchInput{
+    margin:0 !important;
+  }
+}
+
+/* Hide search cleanly without breaking JS */
+.search-center{
+  display:none !important;
+}
+
+@media (max-width: 700px){
+  .search-center{
+    display:none !important;
+  }
+  .next-game-main{
+    gap: 0 !important;
+  }
+}
+
+
+/* Center countdown timer */
+.next-game-main{
+  display:flex !important;
+  justify-content:center !important;
+}
+
+#nextGameCountdown{
+  margin: 0 auto !important;
+  justify-content:center !important;
+}
 </style>
 </head>
 <body>
