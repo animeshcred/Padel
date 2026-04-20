@@ -209,28 +209,16 @@
 
     .calendar-weekday,
     .calendar-day {
-      text-align: center;
-      border-radius: 10px;
-    }
-
-    .calendar-weekday {
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      padding: 6px 0;
-    }
-
-    .calendar-day {
-      min-height: 56px;
-      padding: 8px 6px;
+      border-radius: 12px;
+      min-height: 44px;
+      padding: 4px 4px;
       border: 1px solid rgba(255,255,255,0.08);
       background: rgba(255,255,255,0.035);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      gap: 4px;
+      gap: 2px;
     }
 
     .calendar-day.is-empty {
@@ -252,8 +240,22 @@
     }
 
     .calendar-day.is-today {
-      outline: 2px solid rgba(255,255,255,0.28);
-      outline-offset: -2px;
+      outline: none;
+      background: rgba(255, 255, 255, 0.12);
+      position: relative;
+    }
+
+    
+
+    .calendar-day.is-today .calendar-day-num {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .calendar-day.is-today .calendar-day-num {
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 1.1rem;
     }
 
     .calendar-day.is-past {
@@ -274,24 +276,9 @@
       line-height: 1;
     }
 
-    .calendar-legend {
-      margin-top: 12px;
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      align-items: center;
-      color: var(--muted);
-      font-size: 0.82rem;
-    }
+    
 
-    .calendar-legend-swatch {
-      width: 12px;
-      height: 12px;
-      border-radius: 4px;
-      background: rgba(120, 224, 143, 0.18);
-      border: 1px solid rgba(120, 224, 143, 0.34);
-      display: inline-block;
-    }
+    
 
     @media (max-width: 700px) {
       .calendar-grid {
@@ -828,15 +815,7 @@
 
       wrapper.appendChild(grid);
 
-      const legend = document.createElement('div');
-      legend.className = 'calendar-legend';
-      const swatch = document.createElement('span');
-      swatch.className = 'calendar-legend-swatch';
-      legend.appendChild(swatch);
-      const legendText = document.createElement('span');
-      legendText.textContent = 'Booked dates';
-      legend.appendChild(legendText);
-      wrapper.appendChild(legend);
+      
 
       return wrapper;
     }
