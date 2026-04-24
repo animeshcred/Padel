@@ -2296,6 +2296,29 @@ tbody td:last-child,
       element.style.setProperty('--chip-hue', String(getPlayerHue(playerName)));
     }
 
+    function getBookingRelativeLabel(dateStr) {
+      const parts = parseDayMonthYear(dateStr);
+      if (!parts) {
+        return '';
+      }
+
+      const bookingDate = new Date(parts.year, parts.month, parts.day);
+      const today = new Date();
+      const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const tomorrowOnly = new Date(todayOnly);
+      tomorrowOnly.setDate(todayOnly.getDate() + 1);
+
+      if (bookingDate.getTime() === todayOnly.getTime()) {
+        return 'today';
+      }
+
+      if (bookingDate.getTime() === tomorrowOnly.getTime()) {
+        return 'tomorrow';
+      }
+
+      return '';
+    }
+
     function buildShareText(item) {
       const dateLabel = [item.day, formatShortDate(item.date)]
         .filter(Boolean)
@@ -2309,17 +2332,37 @@ tbody td:last-child,
         .filter(Boolean)
         .join(' • ');
 
-      const playersLabel = item.players || 'Open slots';
+      const playersArray = splitPlayers(item.players);
+      const playerCount = playersArray.length;
+      const maxPlayers = 4;
+      const spotsLeft = Math.max(0, maxPlayers - playerCount);
 
-      return [
-        '🎾 See you on court!',
+      const playersBlock = playersArray.length
+        ? playersArray.map(function(player) { return '- ' + player; }).join('
+')
+        : '- Open slots';
+
+      const relativeLabel = getBookingRelativeLabel(item.date);
+      const baseTitle = playerCount < maxPlayers ? '🎾 Setting up a game' : '🎾 See you on court';
+      const title = relativeLabel ? baseTitle + ' ' + relativeLabel + '!' : baseTitle + '!';
+
+      const message = [
+        title,
         '',
         '📅 ' + dateLabel,
         '⏰ ' + timeLabel,
         '📍 ' + locationLabel,
         '',
-        '👥 Players: ' + playersLabel
-      ].join('\n');
+        '👥 Players (' + playerCount + '/' + maxPlayers + '):',
+        playersBlock
+      ];
+
+      if (spotsLeft > 0) {
+        message.push('', '🚨 ' + spotsLeft + ' spot' + (spotsLeft === 1 ? '' : 's') + ' left!');
+      }
+
+      return message.join('
+');
     }
 
     function shareOnWhatsApp(item) {
