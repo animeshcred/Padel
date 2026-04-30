@@ -1,2782 +1,1011 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Padel Schedule</title>
-<style>
-    :root {
-      --bg: #0b1020;
-      --panel: #121933;
-      --panel-2: #1a2345;
-      --text: #eef2ff;
-      --muted: #aab4d6;
-      --accent: #78e08f;
-      --border: rgba(255, 255, 255, 0.08);
-      --warn-bg: rgba(255, 212, 121, 0.08);
-      --warn-border: rgba(255, 212, 121, 0.25);
-      --warn-text: #ffe9b8;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background-color: var(--bg);
-      background-image: url('a_photograph_captures_an_updated_public_schedule_t.png');
-      background-size: cover;
-      background-position: center;
-      background-attachment: scroll;
-      color: var(--text);
-      position: relative;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: linear-gradient(rgba(6,18,20,0.42), rgba(6,18,20,0.42));
-      backdrop-filter: blur(2px);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .wrap {
-      position: relative;
-      z-index: 1;
-      max-width: 1440px;
-      margin: auto;
-      padding: 24px;
-    }
-
-    .banner-search-wrap {
-      width: 100%;
-      margin-bottom: 14px;
-    }
-
-    .banner-search-input {
-      width: 100%;
-    }
-
-    input {
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: rgba(26, 35, 69, 0.7);
-      backdrop-filter: blur(4px);
-      color: var(--text);
-      min-width: 0;
-    }
-
-
-    .next-game-banner {
-      display: none;
-      margin-bottom: 16px;
-      padding: 16px 18px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
-      border: 1px solid rgba(255,255,255,0.18);
-      color: var(--text);
-      box-shadow: 0 14px 34px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.08);
-      backdrop-filter: blur(14px) saturate(140%);
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
-    }
-
-    .next-game-label {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: rgba(238, 242, 255, 0.72);
-      margin-bottom: 10px;
-    }
-
-    .next-game-main {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px 18px;
-    }
-
-    .flip-clock {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: stretch;
-      gap: 10px;
-    }
-
-    .flip-unit {
-      min-width: 72px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .flip-card {
-      position: relative;
-      width: 72px;
-      height: 84px;
-      perspective: 1000px;
-    }
-
-    .flip-card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      border-radius: 16px;
-      overflow: hidden;
-      background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.07));
-      border: 1px solid rgba(255,255,255,0.18);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 10px 24px rgba(0,0,0,0.24);
-      backdrop-filter: blur(10px) saturate(150%);
-      -webkit-backdrop-filter: blur(10px) saturate(150%);
-    }
-
-    .flip-card.flipping .flip-card-inner {
-      animation: flipTick 0.55s ease;
-      transform-origin: center;
-    }
-
-    .flip-value {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-variant-numeric: tabular-nums;
-      color: #f3fff7;
-      text-shadow: 0 2px 12px rgba(120, 224, 143, 0.25);
-      font-size: clamp(1.65rem, 4vw, 2.25rem);
-      letter-spacing: 0.04em;
-    }
-
-    .flip-card::before,
-    .flip-card::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      width: 8px;
-      height: 8px;
-      margin-top: -4px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.24);
-      z-index: 3;
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
-    }
-
-    .flip-card::before {
-      left: -4px;
-    }
-
-    .flip-card::after {
-      right: -4px;
-    }
-
-    .flip-card .flip-card-inner::after {
-      content: '';
-      position: absolute;
-      left: 8px;
-      right: 8px;
-      top: 50%;
-      height: 1px;
-      background: rgba(255,255,255,0.14);
-      z-index: 2;
-    }
-
-    .flip-unit-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: rgba(238, 242, 255, 0.72);
-    }
-
-    .next-game-meta {
-      min-width: 260px;
-      max-width: 420px;
-    }
-
-    .next-game-meta-card {
-      padding: 12px 14px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
-      border: 1px solid rgba(255,255,255,0.14);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
-      backdrop-filter: blur(10px) saturate(135%);
-      -webkit-backdrop-filter: blur(10px) saturate(135%);
-    }
-
-    .next-game-meta-heading {
-      font-size: 0.72rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(238, 242, 255, 0.62);
-      margin-bottom: 8px;
-    }
-
-    .next-game-meta-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .meta-chip {
-      display: inline-flex;
-      align-items: center;
-      min-height: 32px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: rgba(243, 255, 247, 0.96);
-      font-size: 0.88rem;
-      font-weight: 600;
-      line-height: 1;
-      white-space: nowrap;
-    }
-
-    .next-game-meta-location {
-      color: rgba(238, 242, 255, 0.84);
-      font-size: 0.95rem;
-      line-height: 1.4;
-      font-weight: 500;
-    }
-
-    @keyframes flipTick {
-      0% { transform: rotateX(0deg) scale(1); }
-      40% { transform: rotateX(-10deg) scale(0.992); }
-      100% { transform: rotateX(0deg) scale(1); }
-    }
-
-    @media (max-width: 700px) {
-      .next-game-banner {
-        padding: 12px 12px 13px;
-        border-radius: 16px;
-      }
-
-      .next-game-main {
-        align-items: flex-start;
-        gap: 12px;
-      }
-
-      .banner-search-wrap {
-        margin-bottom: 10px;
-      }
-
-      .flip-clock {
-        gap: 6px;
-      }
-
-      .flip-unit {
-        min-width: 52px;
-        gap: 4px;
-      }
-
-      .flip-card {
-        width: 52px;
-        height: 62px;
-      }
-
-      .flip-card-inner {
-        border-radius: 12px;
-      }
-
-      .flip-value {
-        font-size: 1.35rem;
-      }
-
-      .flip-unit-label {
-        font-size: 0.62rem;
-        letter-spacing: 0.06em;
-      }
-
-      .next-game-meta {
-        min-width: 100%;
-        max-width: 100%;
-      }
-
-      .next-game-meta-card {
-        padding: 10px 11px;
-        border-radius: 14px;
-      }
-
-      .next-game-meta-heading {
-        font-size: 0.66rem;
-        margin-bottom: 7px;
-      }
-
-      .meta-chip {
-        min-height: 28px;
-        padding: 5px 9px;
-        font-size: 0.78rem;
-      }
-
-      .next-game-meta-location {
-        font-size: 0.84rem;
-      }
-    }
-
-    .notice {
-      display: none;
-      margin-bottom: 16px;
-      padding: 12px 14px;
-      border-radius: 10px;
-      background: var(--warn-bg);
-      border: 1px solid var(--warn-border);
-      color: var(--warn-text);
-      line-height: 1.5;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 14px;
-      background: rgba(10, 16, 32, 0.14);
-      backdrop-filter: blur(8px) saturate(120%);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.35);
-      width: 100%;
-      max-width: 100%;
-      margin: 0 auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: transparent;
-      table-layout: auto;
-    }
-
-    th, td {
-      padding: 12px 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      text-align: left;
-      vertical-align: top;
-      white-space: nowrap;
-      background: rgba(255,255,255,0.005);
-    }
-
-    th {
-      position: sticky;
-      top: 0;
-      background: rgba(12, 20, 38, 0.18);
-      color: var(--muted);
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      text-align: center;
-      backdrop-filter: blur(4px);
-    }
-
-    tr:hover td {
-      background: rgba(255, 255, 255, 0.025);
-    }
-
-    tr.is-selected td {
-      background: rgba(120, 224, 143, 0.22);
-      box-shadow: none;
-      border-bottom: none;
-    }
-
-    .loading, .empty {
-      padding: 20px;
-      text-align: center;
-      color: var(--muted);
-      background: rgba(18, 25, 51, 0.55);
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      width: fit-content;
-      margin: 0 auto;
-    }
-
-    td.duration-cell,
-    th.duration-col,
-    td.location-cell,
-    th.location-col,
-    td.court-cell,
-    th.court-col {
-      text-align: center;
-    }
-
-    .calendar-wrap {
-      margin: 24px auto 24px;
-      width: fit-content;
-      max-width: 100%;
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 14px;
-      background: rgba(10, 16, 32, 0.14);
-      backdrop-filter: blur(8px) saturate(120%);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.35);
-      padding: 16px;
-      
-    }
-
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .calendar-title {
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--text);
-      text-align: center;
-      flex: 1;
-    }
-
-    .calendar-nav {
-      appearance: none;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(26, 35, 69, 0.55);
-      color: var(--text);
-      border-radius: 10px;
-      padding: 8px 12px;
-      cursor: pointer;
-      min-width: 44px;
-    }
-
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, minmax(52px, 1fr));
-      gap: 8px;
-      align-items: stretch;
-    }
-
-    .calendar-weekday,
-    .calendar-day {
-      border-radius: 12px;
-      min-height: 44px;
-      padding: 4px 4px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.035);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 2px;
-    }
-
-    .calendar-day.is-empty {
-      background: rgba(255,255,255,0.012);
-      border-color: rgba(255,255,255,0.04);
-    }
-
-    .calendar-day.is-booked {
-      background: rgba(120, 224, 143, 0.18);
-      border-color: rgba(120, 224, 143, 0.34);
-      box-shadow: 0 0 0 1px rgba(120, 224, 143, 0.18) inset;
-      cursor: pointer;
-    }
-
-    .calendar-day.is-selected {
-      background: rgba(110, 190, 255, 0.28);
-      border-color: rgba(110, 190, 255, 0.5);
-      box-shadow: 0 0 0 2px rgba(110, 190, 255, 0.24) inset;
-    }
-
-    .calendar-day.is-today {
-      outline: none;
-      background: rgba(255, 255, 255, 0.12);
-      position: relative;
-    }
-
-    
-
-    .calendar-day.is-today .calendar-day-num {
-      font-weight: 700;
-      font-size: 0.85rem;
-    }
-
-    .calendar-day.is-today .calendar-day-num {
-      color: #ffffff;
-      font-weight: 900;
-      font-size: 1.1rem;
-    }
-
-    .calendar-day.is-past {
-      background: rgba(255,255,255,0.02);
-      color: rgba(255,255,255,0.35);
-      border-color: rgba(255,255,255,0.05);
-      filter: grayscale(30%);
-    }
-
-    .calendar-day-num {
-      font-weight: 700;
-      font-size: 0.95rem;
-    }
-
-    .calendar-day-meta {
-      font-size: 0.72rem;
-      color: var(--muted);
-      line-height: 1;
-    }
-
-    
-
-    
-
-    @media (max-width: 700px) {
-      .calendar-grid {
-        grid-template-columns: repeat(7, minmax(40px, 1fr));
-        gap: 6px;
-      }
-
-      .calendar-day {
-        min-height: 48px;
-        padding: 6px 4px;
-      }
-    }
-  
-/* Alignment fixes */
-table th, table td { text-align: center !important; }
-table td:last-child, table th:last-child { text-align: left !important; }
-
-/* Search bar alignment with timer */
-.next-game-main {
-  align-items: center !important;
-}
-.search-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Force proper layout: timer | search | meta */
-.next-game-main {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.flip-clock {
-  flex: 1;
-}
-
-.search-center {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.next-game-meta {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
-}
-
-/* Make search bar match timer height */
-.search-center input {
-  height: 84px;
-  padding: 0 18px;
-  font-size: 1rem;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-}
-
-/* Responsive match smaller timer */
-@media (max-width:700px){
-  .search-center input {
-    height: 62px;
-    font-size: 0.9rem;
-  }
-}
-
-
-/* --- Final banner layout: timer | search | upcoming match on one line --- */
-.next-game-main{
-  display:flex !important;
-  flex-wrap:nowrap !important;
-  align-items:center !important;
-  justify-content:space-between !important;
-  gap:18px !important;
-}
-
-#nextGameCountdown{
-  flex:0 1 auto !important;
-  display:flex !important;
-  flex-wrap:nowrap !important;
-  align-items:stretch !important;
-}
-
-.search-center{
-  flex:1 1 360px !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  align-self:center !important;
-  min-width:260px !important;
-  max-width:460px !important;
-  margin:0 !important;
-}
-
-.next-game-meta{
-  flex:0 1 420px !important;
-  min-width:260px !important;
-  max-width:420px !important;
-  margin:0 !important;
-}
-
-/* --- Search input as glass card matching countdown cards --- */
-.search-center input,
-#searchInput{
-  width:100% !important;
-  height:84px !important;
-  padding:0 20px !important;
-  border-radius:16px !important;
-  border:1px solid rgba(255,255,255,0.18) !important;
-  background:linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.07)) !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.12), 0 10px 24px rgba(0,0,0,0.24) !important;
-  backdrop-filter:blur(10px) saturate(150%) !important;
-  -webkit-backdrop-filter:blur(10px) saturate(150%) !important;
-  color:#f3fff7 !important;
-  font-weight:700 !important;
-  font-size:1rem !important;
-  line-height:84px !important;
-  margin:0 !important;
-  vertical-align:middle !important;
-}
-
-#searchInput::placeholder{
-  color:rgba(243,255,247,0.78) !important;
-  font-weight:600 !important;
-}
-
-/* Keep table alignment: all centered except Players */
-table th, table td { text-align:center !important; vertical-align:middle !important; }
-table td:last-child, table th:last-child { text-align:left !important; }
-
-/* Mobile */
-@media (max-width: 1100px){
-  .next-game-main{
-    flex-wrap:wrap !important;
-  }
-  .search-center{
-    order:2;
-    flex:1 1 100% !important;
-    max-width:100% !important;
-  }
-  .next-game-meta{
-    order:3;
-    max-width:100% !important;
-  }
-}
-
-@media (max-width:700px){
-  .search-center input,
-  #searchInput{
-    height:62px !important;
-    line-height:62px !important;
-    border-radius:12px !important;
-    font-size:0.92rem !important;
-  }
-}
-
-/* Compact banner so all fit in one row */
-
-/* shrink timer cards */
-.flip-card{
-  width:56px !important;
-  height:64px !important;
-}
-.flip-value{
-  font-size:1.3rem !important;
-}
-.flip-unit{
-  min-width:56px !important;
-}
-
-/* shrink search bar */
-#searchInput{
-  height:64px !important;
-  line-height:64px !important;
-  font-size:0.9rem !important;
-  padding:0 14px !important;
-}
-
-/* shrink match card */
-.next-game-meta-card{
-  padding:8px 10px !important;
-}
-.meta-chip{
-  font-size:0.75rem !important;
-  padding:4px 8px !important;
-}
-.next-game-meta-location{
-  font-size:0.8rem !important;
-}
-
-/* ensure everything stays in one row */
-.next-game-main{
-  flex-wrap:nowrap !important;
-  gap:12px !important;
-}
-
-/* Perfect center alignment for search */
-.next-game-main{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:space-between !important;
-}
-
-/* Give equal space to left and right */
-#nextGameCountdown{
-  flex:1;
-  display:flex;
-  justify-content:flex-start;
-}
-
-.next-game-meta{
-  flex:1;
-  display:flex;
-  justify-content:flex-end;
-}
-
-/* Center search exactly */
-.search-center{
-  flex:0 0 320px !important;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
-/* Layout: timer left, search right */
-.next-game-main{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:space-between !important;
-}
-
-#nextGameCountdown{
-  flex:1;
-  display:flex;
-  justify-content:flex-start;
-}
-
-.search-center{
-  flex:0 0 320px !important;
-  display:flex;
-  justify-content:flex-end;
-  align-items:center;
-  margin-left:auto;
-}
-
-/* Soft blink for the next booking date in calendar */
-@keyframes softBlinkNextBookingRed {
-  0% { opacity: 1; box-shadow: 0 0 0 1px rgba(120, 224, 143, 0.20) inset; }
-  50% { opacity: 0.55; box-shadow: 0 0 0 1px rgba(120, 224, 143, 0.08) inset; }
-  100% { opacity: 1; box-shadow: 0 0 0 1px rgba(120, 224, 143, 0.20) inset; }
-}
-
-.calendar-day.is-next-booking {
-  animation: softBlinkNextBookingRed 2.2s ease-in-out infinite;
-}
-
-@keyframes softBlinkNextBookingRed {
-  0% { background: rgba(255,255,255,0.15); }
-  50% { background: rgba(120,224,143,0.35); }
-  100% { background: rgba(255,255,255,0.15); }
-}
-@keyframes blinkNumberRed {
-  0% { color: #ffffff; }
-  50% { color: #78e08f; }
-  100% { color: #ffffff; }
-}
-
-.calendar-day.is-next-booking .calendar-day-num {
-  animation: blinkNumberRed 2s ease-in-out infinite;
-}
-
-@keyframes glowNumber {
-  0% { color: #ffffff; text-shadow: 0 0 4px rgba(255,255,255,0.3); }
-  50% { color: #ffffff; text-shadow: 0 0 12px rgba(120, 224, 143,0.7), 0 0 18px rgba(120, 224, 143,0.5); }
-  100% { color: #ffffff; text-shadow: 0 0 4px rgba(255,255,255,0.3); }
-}
-
-.calendar-day.is-next-booking .calendar-day-num {
-  animation: glowNumber 2.2s ease-in-out infinite;
-}
-
-/* Alternate next booking date number with a padel racket */
-.calendar-day.is-next-booking .calendar-day-num {
-  position: relative;
-  color: transparent !important;
-  text-shadow: none !important;
-  animation: none !important;
-  min-width: 1.4em;
-  min-height: 1.2em;
-}
-
-.calendar-day.is-next-booking .calendar-day-num::before,
-.calendar-day.is-next-booking .calendar-day-num::after {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.45s ease-in-out, transform 0.45s ease-in-out;
-}
-
-.calendar-day.is-next-booking .calendar-day-num::before {
-  content: attr(data-day);
-  color: #ffffff;
-  opacity: 1;
-  transform: scale(1);
-}
-
-.calendar-day.is-next-booking .calendar-day-num::after {
-  content: "🎾";
-  opacity: 0;
-  transform: scale(0.88);
-  filter: drop-shadow(0 0 6px rgba(255,255,255,0.28));
-}
-
-@keyframes nextBookingDateToRacket {
-  0%, 42% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50%, 92% {
-    opacity: 0;
-    transform: scale(0.88);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes nextBookingRacketToDate {
-  0%, 42% {
-    opacity: 0;
-    transform: scale(0.88);
-  }
-  50%, 92% {
-    opacity: 1;
-    transform: scale(1.02);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.88);
-  }
-}
-
-.calendar-day.is-next-booking .calendar-day-num::before {
-  animation: nextBookingDateToRacket 2.4s ease-in-out infinite;
-}
-
-.calendar-day.is-next-booking .calendar-day-num::after {
-  animation: nextBookingRacketToDate 2.4s ease-in-out infinite;
-}
-
-.calendar-day.is-next-booking .calendar-day-num::after {
-  font-size: 1.1em;
-}
-
-/* Robust visible transition for next booking number <-> ball */
-.calendar-day.is-next-booking .calendar-day-num {
-  position: relative !important;
-  color: transparent !important;
-  text-shadow: none !important;
-  min-width: 1.6em !important;
-  min-height: 1.2em !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  overflow: visible !important;
-}
-
-.calendar-day.is-next-booking .calendar-day-num::before,
-.calendar-day.is-next-booking .calendar-day-num::after {
-  content: none !important;
-}
-
-.calendar-day.is-next-booking .calendar-day-num .day-text,
-.calendar-day.is-next-booking .calendar-day-num .ball-text {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.calendar-day.is-next-booking .calendar-day-num .day-text {
-  color: #ffffff;
-  animation: nextBookingShowDay 2.4s ease-in-out infinite;
-}
-
-.calendar-day.is-next-booking .calendar-day-num .ball-text {
-  color: #ffffff;
-  font-size: 1.05em;
-  line-height: 1;
-  text-shadow: 0 0 8px rgba(255,255,255,0.18);
-  animation: nextBookingShowBall 2.4s ease-in-out infinite;
-}
-
-@keyframes nextBookingShowDay {
-  0%, 42% { opacity: 1; transform: scale(1); }
-  50%, 92% { opacity: 0; transform: scale(0.85); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-@keyframes nextBookingShowBall {
-  0%, 42% { opacity: 0; transform: scale(0.85); }
-  50%, 92% { opacity: 1; transform: scale(1.05); }
-  100% { opacity: 0; transform: scale(0.85); }
-}
-
-/* Reset any old pseudo-element icon behavior everywhere */
-.calendar-day .calendar-day-num::before,
-.calendar-day .calendar-day-num::after {
-  content: none !important;
-  animation: none !important;
-}
-
-/* Default date appearance for all calendar dates */
-.calendar-day .calendar-day-num {
-  position: relative !important;
-  color: inherit !important;
-  text-shadow: none !important;
-}
-
-/* Hide layered spans for non-next-booking dates */
-.calendar-day .calendar-day-num .day-text,
-.calendar-day .calendar-day-num .ball-text {
-  display: none !important;
-}
-
-/* Only the next upcoming booking alternates */
-.calendar-day.is-next-booking .calendar-day-num {
-  color: transparent !important;
-  min-width: 1.6em !important;
-  min-height: 1.2em !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  overflow: visible !important;
-}
-
-.calendar-day.is-next-booking .calendar-day-num .day-text,
-.calendar-day.is-next-booking .calendar-day-num .ball-text {
-  position: absolute;
-  inset: 0;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-}
-
-.calendar-day.is-next-booking .calendar-day-num .day-text {
-  color: #ffffff;
-  animation: nextBookingShowDay 2.4s ease-in-out infinite !important;
-}
-
-.calendar-day.is-next-booking .calendar-day-num .ball-text {
-  color: #ffffff;
-  font-size: 1.05em;
-  line-height: 1;
-  text-shadow: 0 0 8px rgba(255,255,255,0.18);
-  animation: nextBookingShowBall 2.4s ease-in-out infinite !important;
-}
-
-@keyframes nextBookingShowDay {
-  0%, 42% { opacity: 1; transform: scale(1); }
-  50%, 92% { opacity: 0; transform: scale(0.88); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-@keyframes nextBookingShowBall {
-  0%, 42% { opacity: 0; transform: scale(0.88); }
-  50%, 92% { opacity: 1; transform: scale(1.04); }
-  100% { opacity: 0; transform: scale(0.88); }
-}
-
-.calendar-day.is-next-booking .calendar-day-num .ball-text {
-  text-shadow: 0 0 10px rgba(120, 224, 143, 0.6), 0 0 16px rgba(120, 224, 143, 0.4);
-}
-
-/* Custom animated SVG tennis ball for next upcoming booking */
-.calendar-day.is-next-booking .calendar-day-num .ball-text {
-  color: inherit !important;
-  text-shadow: none !important;
-}
-
-.tennis-ball-svg {
-  width: 1.15em;
-  height: 1.15em;
-  display: block;
-  overflow: visible;
-  filter:
-    drop-shadow(0 0 3px rgba(120, 224, 143, 0.35))
-    drop-shadow(0 0 8px rgba(120, 224, 143, 0.28));
-  transform-origin: 50% 50%;
-  animation: tennisBallSpinGlow 2.4s ease-in-out infinite;
-}
-
-@keyframes tennisBallSpinGlow {
-  0% {
-    transform: rotate(0deg) scale(0.96);
-    filter:
-      drop-shadow(0 0 2px rgba(120, 224, 143, 0.22))
-      drop-shadow(0 0 5px rgba(120, 224, 143, 0.16));
-  }
-  50% {
-    transform: rotate(180deg) scale(1.06);
-    filter:
-      drop-shadow(0 0 5px rgba(120, 224, 143, 0.48))
-      drop-shadow(0 0 12px rgba(120, 224, 143, 0.34));
-  }
-  100% {
-    transform: rotate(360deg) scale(0.96);
-    filter:
-      drop-shadow(0 0 2px rgba(120, 224, 143, 0.22))
-      drop-shadow(0 0 5px rgba(120, 224, 143, 0.16));
-  }
-}
-
-/* Mobile fix: search goes below countdown */
-@media (max-width: 700px){
-  .next-game-main{
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 10px !important;
-  }
-
-  #nextGameCountdown{
-    order: 1;
-    justify-content: center !important;
-  }
-
-  .search-center{
-    order: 2;
-    width: 100% !important;
-    justify-content: center !important;
-  }
-}
-
-/* Fix excessive spacing on mobile */
-@media (max-width: 700px){
-  .next-game-main{
-    gap: 6px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  #nextGameCountdown{
-    margin-bottom: 0 !important;
-  }
-
-  .search-center{
-    margin: 0 !important;
-  }
-
-  .flip-clock{
-    margin-bottom: 0 !important;
-  }
-
-  .next-game-banner{
-    padding-bottom: 10px !important;
-  }
-}
-
-/* Ultra compact mobile - single card feel */
-@media (max-width: 700px){
-  .next-game-banner{
-    padding: 8px 8px !important;
-    border-radius: 12px !important;
-  }
-
-  .next-game-main{
-    gap: 4px !important;
-  }
-
-  .flip-clock{
-    gap: 4px !important;
-  }
-
-  .flip-unit{
-    gap: 2px !important;
-  }
-
-  .flip-card{
-    width: 46px !important;
-    height: 54px !important;
-  }
-
-  .flip-value{
-    font-size: 1.1rem !important;
-  }
-
-  #searchInput{
-    height: 48px !important;
-    line-height: 48px !important;
-    font-size: 0.85rem !important;
-    border-radius: 10px !important;
-  }
-}
-
-/* Aggressive mobile spacing fix */
-@media (max-width: 700px){
-  .next-game-main{
-    display:flex !important;
-    flex-direction:column !important;
-    gap:2px !important;
-  }
-
-  #nextGameCountdown,
-  .flip-clock{
-    margin:0 !important;
-    padding:0 !important;
-  }
-
-  .flip-unit{
-    margin:0 !important;
-  }
-
-  .search-center{
-    margin-top:2px !important;
-    padding:0 !important;
-  }
-
-  #searchInput{
-    margin:0 !important;
-  }
-}
-
-/* Hide search cleanly without breaking JS */
-.search-center{
-  display:none !important;
-}
-
-@media (max-width: 700px){
-  .search-center{
-    display:none !important;
-  }
-  .next-game-main{
-    gap: 0 !important;
-  }
-}
-
-
-/* Center countdown timer */
-.next-game-main{
-  display:flex !important;
-  justify-content:center !important;
-}
-
-#nextGameCountdown{
-  margin: 0 auto !important;
-  justify-content:center !important;
-}
-
-/* Keep banner element for JS, but remove its visual container */
-#nextGameBanner.next-game-banner{
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  padding: 0 !important;
-  margin-bottom: 12px !important;
-}
-
-#nextGameBanner .next-game-main{
-  justify-content: center !important;
-}
-
-#nextGameBanner .next-game-label,
-#nextGameBanner #nextGameMeta{
-  display: none !important;
-}
-
-
-/* Combined-column table tweaks */
-.availability-col,
-.availability-cell{
-  width: 40px;
-  text-align: center !important;
-  vertical-align: middle !important;
-}
-
-.availability-icon{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 999px;
-  font-size: 0.9rem;
-  line-height: 1;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
-}
-
-@media (max-width: 700px){
-  .availability-col,
-  .availability-cell{
-    width: 34px;
-  }
-  .availability-icon{
-    width: 18px;
-    height: 18px;
-    font-size: 0.8rem;
-  }
-}
-
-
-/* Make icon column thinner and tighter to Day column */
-.availability-col,
-.availability-cell{
-  width: 20px !important;
-  padding: 4px 4px !important;
-}
-
-.availability-icon{
-  width: 16px;
-  height: 16px;
-  font-size: 0.75rem;
-}
-
-.table-wrap td:first-child,
-.table-wrap th:first-child{
-  padding-right: 4px !important;
-}
-
-.table-wrap td:nth-child(2),
-.table-wrap th:nth-child(2){
-  padding-left: 4px !important;
-}
-
-/* Sticky headers + smaller mobile header sizing */
-th {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-}
-
-@media (max-width: 700px) {
-  th {
-    font-size: 11px !important;
-    padding: 8px 8px !important;
-    letter-spacing: 0.02em !important;
-  }
-}
-
-/* Center align all headers */
-th {
-  text-align: center !important;
-  vertical-align: middle !important;
-}
-
-/* Force Players header center */
-th:last-child {
-  text-align: center !important;
-}
-
-/* Keep Players data left, but center only the Players header */
-table th:last-child,
-thead th:last-child,
-.table-wrap thead th:last-child {
-  text-align: center !important;
-  vertical-align: middle !important;
-}
-
-table td:last-child,
-tbody td:last-child,
-.table-wrap tbody td:last-child {
-  text-align: left !important;
-}
-
-/* Increase side margins for table on desktop */
-.table-wrap {
-  margin-left: 40px !important;
-  margin-right: 40px !important;
-}
-
-/* Keep mobile unchanged */
-@media (max-width: 700px){
-  .table-wrap {
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-}
-
-/* Increase desktop margins further */
-@media (min-width: 701px){
-  .table-wrap {
-    margin-left: 80px !important;
-    margin-right: 80px !important;
-  }
-}
-
-/* Center table as dashboard card on desktop */
-@media (min-width: 701px){
-  .table-wrap {
-    max-width: 1100px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-}
-
-/* Clickable player chips */
-.player-chip-bar {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  max-width: 1100px;
-  margin: 0 auto 18px;
-}
-
-.player-chip,
-.clear-player-chip {
-  appearance: none;
-  border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 999px;
-  padding: 7px 11px;
-  background: rgba(255,255,255,0.08);
-  color: rgba(243,255,247,0.94);
-  font-weight: 700;
-  font-size: 0.82rem;
-  line-height: 1;
-  cursor: pointer;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
-  backdrop-filter: blur(8px) saturate(130%);
-  -webkit-backdrop-filter: blur(8px) saturate(130%);
-}
-
-.player-chip:hover,
-.clear-player-chip:hover {
-  background: rgba(120,224,143,0.16);
-  border-color: rgba(120,224,143,0.32);
-}
-
-.player-chip.is-active {
-  background: rgba(120,224,143,0.28);
-  border-color: rgba(120,224,143,0.55);
-  color: #ffffff;
-  box-shadow: 0 0 0 2px rgba(120,224,143,0.12) inset;
-}
-
-.clear-player-chip {
-  background: rgba(255,255,255,0.05);
-  color: rgba(238,242,255,0.72);
-}
-
-.players-cell {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  min-width: 220px;
-}
-
-.table-player-chip {
-  appearance: none;
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 999px;
-  padding: 5px 8px;
-  background: rgba(255,255,255,0.08);
-  color: rgba(243,255,247,0.94);
-  font-weight: 700;
-  font-size: 0.78rem;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.table-player-chip:hover,
-.table-player-chip.is-active {
-  background: rgba(120,224,143,0.22);
-  border-color: rgba(120,224,143,0.45);
-}
-
-@media (max-width: 700px) {
-  .player-chip-bar {
-    gap: 6px;
-    margin-bottom: 14px;
-  }
-
-  .player-chip,
-  .clear-player-chip {
-    padding: 6px 9px;
-    font-size: 0.76rem;
-  }
-
-  .players-cell {
-    min-width: 190px;
-  }
-}
-
-
-/* ===============================
-   Clean final layout overrides
-   =============================== */
-
-/* Remove obsolete hidden search UI completely */
-.search-center,
-.banner-search-wrap,
-.banner-search-input,
-#searchInput {
-  display: none !important;
-}
-
-/* Countdown only, centered and compact */
-#nextGameBanner.next-game-banner {
-  display: block;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  padding: 0 !important;
-  margin-bottom: 14px !important;
-}
-
-#nextGameBanner .next-game-main {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  gap: 0 !important;
-  flex-wrap: nowrap !important;
-}
-
-#nextGameCountdown {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: stretch !important;
-  gap: 8px !important;
-  margin: 0 auto !important;
-  flex: 0 1 auto !important;
-}
-
-.flip-unit {
-  min-width: 56px !important;
-  gap: 4px !important;
-}
-
-.flip-card {
-  width: 56px !important;
-  height: 64px !important;
-}
-
-.flip-value {
-  font-size: 1.3rem !important;
-}
-
-#nextGameBanner .next-game-label,
-#nextGameBanner #nextGameMeta {
-  display: none !important;
-}
-
-/* Labeled glass sections */
-.section-card {
-  width: fit-content;
-  max-width: 100%;
-  margin: 24px auto;
-  padding: 16px;
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 18px;
-  background: rgba(10, 16, 32, 0.22);
-  backdrop-filter: blur(10px) saturate(130%);
-  -webkit-backdrop-filter: blur(10px) saturate(130%);
-  box-shadow: 0 14px 44px rgba(0,0,0,0.34);
-}
-
-.section-card.section-table {
-  width: 100%;
-  max-width: 1100px;
-}
-
-.section-label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
-  color: var(--text);
-}
-
-.section-title {
-  font-size: 0.92rem;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.section-subtitle {
-  color: rgba(238,242,255,0.68);
-  font-size: 0.82rem;
-  font-weight: 600;
-}
-
-/* Let section cards own the glass effect */
-.calendar-wrap,
-.table-wrap {
-  margin: 0 !important;
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  padding: 0 !important;
-}
-
-.table-wrap {
-  max-width: 100% !important;
-}
-
-/* Player chip colors */
-.player-chip,
-.table-player-chip {
-  --chip-hue: 130;
-  border-color: hsla(var(--chip-hue), 80%, 70%, 0.34) !important;
-  background:
-    linear-gradient(180deg, hsla(var(--chip-hue), 80%, 55%, 0.24), hsla(var(--chip-hue), 80%, 45%, 0.10)) !important;
-  color: #ffffff !important;
-}
-
-.player-chip:hover,
-.table-player-chip:hover,
-.player-chip.is-active,
-.table-player-chip.is-active {
-  border-color: hsla(var(--chip-hue), 90%, 75%, 0.74) !important;
-  background:
-    linear-gradient(180deg, hsla(var(--chip-hue), 90%, 58%, 0.42), hsla(var(--chip-hue), 90%, 46%, 0.22)) !important;
-  box-shadow:
-    0 0 0 2px hsla(var(--chip-hue), 90%, 65%, 0.12) inset,
-    0 6px 18px hsla(var(--chip-hue), 90%, 45%, 0.12) !important;
-}
-
-.clear-player-chip {
-  background: rgba(255,255,255,0.06) !important;
-}
-
-/* Mobile */
-@media (max-width: 700px) {
-  .wrap {
-    padding: 14px;
-  }
-
-  #nextGameCountdown {
-    gap: 4px !important;
-  }
-
-  .flip-unit {
-    min-width: 46px !important;
-  }
-
-  .flip-card {
-    width: 46px !important;
-    height: 54px !important;
-  }
-
-  .flip-value {
-    font-size: 1.1rem !important;
-  }
-
-  .section-card {
-    width: 100%;
-    padding: 12px;
-    border-radius: 14px;
-    margin: 16px auto;
-  }
-
-  .section-label {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .section-title {
-    font-size: 0.8rem;
-  }
-
-  .section-subtitle {
-    font-size: 0.76rem;
-  }
-
-  .share-col,
-  .share-cell {
-    width: 44px;
-  }
-
-  .whatsapp-share-btn {
-    width: 30px;
-    height: 30px;
-    font-size: 0.9rem;
-  }
-}
-
-
-/* Real WhatsApp share button */
-.whatsapp-share-btn {
-  appearance: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.16);
-  background: #25D366;
-  color: #ffffff;
-  cursor: pointer;
-  line-height: 1;
-  box-shadow:
-    0 6px 16px rgba(37, 211, 102, 0.32),
-    inset 0 1px 0 rgba(255,255,255,0.20);
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-}
-
-.whatsapp-share-btn:hover {
-  background: #1ebe5d;
-  transform: scale(1.08);
-  box-shadow:
-    0 8px 20px rgba(37, 211, 102, 0.46),
-    inset 0 1px 0 rgba(255,255,255,0.22);
-}
-
-.whatsapp-share-btn svg {
-  width: 19px;
-  height: 19px;
-  display: block;
-}
-
-</style>
+<link rel="stylesheet" href="padel-schedule-clean.css">
 </head>
 <body>
 <div class="wrap">
-<div class="next-game-banner" id="nextGameBanner">
-<div class="next-game-main"><div aria-live="polite" class="flip-clock" id="nextGameCountdown">
-<div class="flip-unit">
-<div class="flip-card" data-unit="days">
-<div class="flip-card-inner">
-<div class="flip-value">00</div>
+  <div class="next-game-banner" id="nextGameBanner">
+    <div class="next-game-main">
+      <div aria-live="polite" class="flip-clock" id="nextGameCountdown">
+        <div class="flip-unit">
+          <div class="flip-card" data-unit="days">
+            <div class="flip-card-inner">
+              <div class="flip-value">00</div>
+            </div>
+          </div>
+          <div class="flip-unit-label">Days</div>
+        </div>
+        <div class="flip-unit">
+          <div class="flip-card" data-unit="hours">
+            <div class="flip-card-inner">
+              <div class="flip-value">00</div>
+            </div>
+          </div>
+          <div class="flip-unit-label">Hours</div>
+        </div>
+        <div class="flip-unit">
+          <div class="flip-card" data-unit="minutes">
+            <div class="flip-card-inner">
+              <div class="flip-value">00</div>
+            </div>
+          </div>
+          <div class="flip-unit-label">Minutes</div>
+        </div>
+        <div class="flip-unit">
+          <div class="flip-card" data-unit="seconds">
+            <div class="flip-card-inner">
+              <div class="flip-value">00</div>
+            </div>
+          </div>
+          <div class="flip-unit-label">Seconds</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice" id="notice"></div>
+  <div id="content"></div>
 </div>
-</div>
-<div class="flip-unit-label">Days</div>
-</div>
-<div class="flip-unit">
-<div class="flip-card" data-unit="hours">
-<div class="flip-card-inner">
-<div class="flip-value">00</div>
-</div>
-</div>
-<div class="flip-unit-label">Hours</div>
-</div>
-<div class="flip-unit">
-<div class="flip-card" data-unit="minutes">
-<div class="flip-card-inner">
-<div class="flip-value">00</div>
-</div>
-</div>
-<div class="flip-unit-label">Minutes</div>
-</div>
-<div class="flip-unit">
-<div class="flip-card" data-unit="seconds">
-<div class="flip-card-inner">
-<div class="flip-value">00</div>
-</div>
-</div>
-<div class="flip-unit-label">Seconds</div>
-</div>
-</div><div class="search-center"><input class="banner-search-input" id="searchInput" placeholder="Search players, day, date, duration, location, court..." style="max-width:400px; width:100%;"/></div></div>
-</div>
-<div class="notice" id="notice"></div>
-<div id="content"></div>
-</div>
+
 <script>
-    const SHEET_ID = '1h3ZnjMmwfC_jlLAto90GMuPkl4yQ5lfaQ7U4P1JtSfU';
-    const SHEET_NAME = 'Tab';
-    const SHEET_GID = '0';
-    const CSV_URLS = [
-      'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(SHEET_NAME),
-      'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&sheet=' + encodeURIComponent(SHEET_NAME),
-      'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=' + SHEET_GID
-    ];
+const SHEET_ID = '1h3ZnjMmwfC_jlLAto90GMuPkl4yQ5lfaQ7U4P1JtSfU';
+const SHEET_NAME = 'Tab';
+const SHEET_GID = '0';
+const CSV_URLS = [
+  'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&sheet=' + encodeURIComponent(SHEET_NAME),
+  'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&sheet=' + encodeURIComponent(SHEET_NAME),
+  'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=' + SHEET_GID
+];
 
-    const STORAGE_KEY = 'padelScheduleCacheV1';
-    const STORAGE_TS_KEY = 'padelScheduleCacheTimestampV1';
+const STORAGE_KEY = 'padelScheduleCacheV1';
+const STORAGE_TS_KEY = 'padelScheduleCacheTimestampV1';
 
-    const fallbackRows = [
-      { day: 'Sat', date: '18/04/2026', start: '06:30', end: '08:30', duration: '120', location: 'Wadala', court: '3 Men Americano', players: 'Yogesh, Sahil, Gautam Dubai' },
-      { day: 'Sun', date: '19/04/2026', start: '20:00', end: '21:30', duration: '90', location: 'Wadala', court: '3', players: 'AD, NMD, Sheldon, Rohit Ramaswamy' },
-      { day: 'Wed', date: '22/04/2026', start: '19:00', end: '20:30', duration: '90', location: 'Wadala', court: '3', players: 'AD, Aman Makan, Dinesh, Advait' },
-      { day: 'Thu', date: '23/04/2026', start: '19:00', end: '20:30', duration: '90', location: 'Wadala', court: '3', players: 'AD, NMD, Sonia' },
-      { day: 'Fri', date: '24/04/2026', start: '18:00', end: '20:00', duration: '120', location: 'Wadala', court: '4', players: 'Women Americano' },
-      { day: 'Sat', date: '25/04/2026', start: '06:30', end: '08:00', duration: '90', location: 'Wadala', court: '3', players: 'AD' },
-      { day: 'Sun', date: '26/04/2026', start: '18:00', end: '19:30', duration: '90', location: 'Wadala', court: '3', players: '' }
-    ];
+const fallbackRows = [
+  { day: 'Sat', date: '18/04/2026', start: '06:30', end: '08:30', duration: '120', location: 'Wadala', court: '3 Men Americano', players: 'Yogesh, Sahil, Gautam Dubai' },
+  { day: 'Sun', date: '19/04/2026', start: '20:00', end: '21:30', duration: '90', location: 'Wadala', court: '3', players: 'AD, NMD, Sheldon, Rohit Ramaswamy' },
+  { day: 'Wed', date: '22/04/2026', start: '19:00', end: '20:30', duration: '90', location: 'Wadala', court: '3', players: 'AD, Aman Makan, Dinesh, Advait' },
+  { day: 'Thu', date: '23/04/2026', start: '19:00', end: '20:30', duration: '90', location: 'Wadala', court: '3', players: 'AD, NMD, Sonia' },
+  { day: 'Fri', date: '24/04/2026', start: '18:00', end: '20:00', duration: '120', location: 'Wadala', court: '4', players: 'Women Americano' },
+  { day: 'Sat', date: '25/04/2026', start: '06:30', end: '08:00', duration: '90', location: 'Wadala', court: '3', players: 'AD' },
+  { day: 'Sun', date: '26/04/2026', start: '18:00', end: '19:30', duration: '90', location: 'Wadala', court: '3', players: '' }
+];
 
-    const contentEl = document.getElementById('content');
-    const noticeEl = document.getElementById('notice');
-    const nextGameBannerEl = document.getElementById('nextGameBanner');
-    const nextGameCountdownEl = document.getElementById('nextGameCountdown');
-    const nextGameMetaEl = document.getElementById('nextGameMeta');
-    const flipCardEls = {
-      days: nextGameCountdownEl.querySelector('[data-unit="days"]'),
-      hours: nextGameCountdownEl.querySelector('[data-unit="hours"]'),
-      minutes: nextGameCountdownEl.querySelector('[data-unit="minutes"]'),
-      seconds: nextGameCountdownEl.querySelector('[data-unit="seconds"]')
-    };
-    const nextGameDateChipEl = document.getElementById('nextGameDateChip');
-    const nextGameTimeChipEl = document.getElementById('nextGameTimeChip');
-    const nextGameLocationTextEl = document.getElementById('nextGameLocationText');
-    const previousCountdownValues = { days: '', hours: '', minutes: '', seconds: '' };
+const contentEl = document.getElementById('content');
+const noticeEl = document.getElementById('notice');
+const nextGameBannerEl = document.getElementById('nextGameBanner');
+const nextGameCountdownEl = document.getElementById('nextGameCountdown');
+const flipCardEls = {
+  days: nextGameCountdownEl.querySelector('[data-unit="days"]'),
+  hours: nextGameCountdownEl.querySelector('[data-unit="hours"]'),
+  minutes: nextGameCountdownEl.querySelector('[data-unit="minutes"]'),
+  seconds: nextGameCountdownEl.querySelector('[data-unit="seconds"]')
+};
+const previousCountdownValues = { days: '', hours: '', minutes: '', seconds: '' };
 
-    let data = [];
-    let calendarMonth = null;
-    let selectedBookingDate = '';
-    let selectedPlayer = '';
-    let renderDebounceTimer = null;
-    let countdownInterval = null;
-    let lastRenderedRows = [];
-    let playerHueMap = {};
+let data = [];
+let calendarMonth = null;
+let selectedBookingDate = '';
+let selectedPlayer = '';
+let renderDebounceTimer = null;
+let countdownInterval = null;
+let lastRenderedRows = [];
+let playerHueMap = {};
 
+function saveCache(rows) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
+    localStorage.setItem(STORAGE_TS_KEY, String(Date.now()));
+  } catch (error) {}
+}
 
-    function saveCache(rows) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
-        localStorage.setItem(STORAGE_TS_KEY, String(Date.now()));
-      } catch (error) {
-        // Ignore localStorage failures
+function loadCache() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      return [];
+    }
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function getCacheTimestampLabel() {
+  try {
+    const raw = localStorage.getItem(STORAGE_TS_KEY);
+    const ts = Number(raw);
+    return ts ? new Date(ts).toLocaleString() : '';
+  } catch (error) {
+    return '';
+  }
+}
+
+function validateHeaders(rows) {
+  if (!rows.length) {
+    throw new Error('The sheet is empty.');
+  }
+  const headers = headerIndexMap(rows[0]);
+  if (headers.date === undefined) {
+    throw new Error('Missing required column: date');
+  }
+}
+
+function scheduleRender() {
+  clearTimeout(renderDebounceTimer);
+  renderDebounceTimer = setTimeout(render, 200);
+}
+
+function getUpcomingRows(rows) {
+  const now = new Date();
+  return rows
+    .map(function(item) {
+      return { item: item, dateValue: parseDateValue(item.date, item.start) };
+    })
+    .filter(function(entry) {
+      return entry.dateValue && entry.dateValue.getTime() >= now.getTime();
+    })
+    .sort(function(a, b) {
+      return a.dateValue.getTime() - b.dateValue.getTime();
+    });
+}
+
+function getNextBookingKey(rows) {
+  const upcoming = getUpcomingRows(rows);
+  return upcoming.length ? bookingKeyFromDateString(upcoming[0].item.date) : '';
+}
+
+function getCountdownParts(ms) {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return {
+    days: String(days).padStart(2, '0'),
+    hours: String(hours).padStart(2, '0'),
+    minutes: String(minutes).padStart(2, '0'),
+    seconds: String(seconds).padStart(2, '0')
+  };
+}
+
+function setFlipValue(unit, value) {
+  const card = flipCardEls[unit];
+  if (!card) {
+    return;
+  }
+  const middle = card.querySelector('.flip-value');
+  if (previousCountdownValues[unit] === value) {
+    middle.textContent = value;
+    return;
+  }
+  middle.textContent = value;
+  card.classList.remove('flipping');
+  void card.offsetWidth;
+  card.classList.add('flipping');
+  previousCountdownValues[unit] = value;
+}
+
+function setFlipLiveState() {
+  ['days', 'hours', 'minutes', 'seconds'].forEach(function(unit) {
+    setFlipValue(unit, unit === 'seconds' ? 'GO' : '00');
+  });
+}
+
+function updateNextGameBanner(rows) {
+  clearInterval(countdownInterval);
+  const upcoming = getUpcomingRows(rows);
+  if (!upcoming.length) {
+    nextGameBannerEl.style.display = 'none';
+    return;
+  }
+
+  const eventDate = upcoming[0].dateValue;
+
+  function paintCountdown() {
+    const diff = eventDate.getTime() - Date.now();
+    if (diff <= 0) {
+      setFlipLiveState();
+      return;
+    }
+    const parts = getCountdownParts(diff);
+    setFlipValue('days', parts.days);
+    setFlipValue('hours', parts.hours);
+    setFlipValue('minutes', parts.minutes);
+    setFlipValue('seconds', parts.seconds);
+  }
+
+  nextGameBannerEl.style.display = 'block';
+  paintCountdown();
+  countdownInterval = setInterval(paintCountdown, 1000);
+}
+
+function showNotice(message) {
+  noticeEl.textContent = message;
+  noticeEl.style.display = 'block';
+}
+
+function hideNotice() {
+  noticeEl.textContent = '';
+  noticeEl.style.display = 'none';
+}
+
+function parseCSV(text) {
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+    const next = text[i + 1];
+    if (char === '"') {
+      if (inQuotes && next === '"') {
+        cell += '"';
+        i += 1;
+      } else {
+        inQuotes = !inQuotes;
       }
-    }
-
-    function loadCache() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) {
-          return [];
-        }
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch (error) {
-        return [];
+    } else if (char === ',' && !inQuotes) {
+      row.push(cell);
+      cell = '';
+    } else if ((char === '\n' || char === '\r') && !inQuotes) {
+      if (char === '\r' && next === '\n') {
+        i += 1;
       }
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = '';
+    } else {
+      cell += char;
     }
+  }
 
-    function getCacheTimestampLabel() {
-      try {
-        const raw = localStorage.getItem(STORAGE_TS_KEY);
-        if (!raw) {
-          return '';
-        }
-        const ts = Number(raw);
-        if (!ts) {
-          return '';
-        }
-        return new Date(ts).toLocaleString();
-      } catch (error) {
-        return '';
-      }
+  if (cell.length > 0 || row.length > 0) {
+    row.push(cell);
+    rows.push(row);
+  }
+
+  return rows;
+}
+
+function normaliseTime(value) {
+  if (value === null || value === undefined || value === '') {
+    return '';
+  }
+  const str = String(value).trim();
+  if (/^\d{1,2}:\d{2}$/.test(str)) {
+    const parts = str.split(':');
+    return parts[0].padStart(2, '0') + ':' + parts[1];
+  }
+  if (/^\d{1,2}$/.test(str)) {
+    return str.padStart(2, '0') + ':00';
+  }
+  return str;
+}
+
+function formatToAMPM(timeStr) {
+  if (!timeStr) {
+    return '';
+  }
+  const parts = String(timeStr).trim().split(':');
+  if (parts.length < 2) {
+    return timeStr;
+  }
+  const hours = Number(parts[0]);
+  const minutes = Number(parts[1]);
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+    return timeStr;
+  }
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const hours12 = hours % 12 === 0 ? 12 : hours % 12;
+  return String(hours12) + ':' + String(minutes).padStart(2, '0') + ' ' + period;
+}
+
+function isValidSheetDate(value) {
+  return /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(String(value || '').trim());
+}
+
+function formatShortDate(value) {
+  if (!isValidSheetDate(value)) {
+    return value || '';
+  }
+  const parts = String(value).trim().split('/');
+  const day = parts[0].padStart(2, '0');
+  const monthIndex = parseInt(parts[1], 10) - 1;
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const month = months[monthIndex] || parts[1];
+  return day + ' ' + month;
+}
+
+function parseDateValue(dateStr, timeStr) {
+  if (!isValidSheetDate(dateStr)) {
+    return null;
+  }
+  const match = String(dateStr).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!match) {
+    return null;
+  }
+  const dd = match[1];
+  const mm = match[2];
+  const yyyy = match[3];
+  const time = normaliseTime(timeStr || '00:00') || '00:00';
+  const iso = yyyy + '-' + mm.padStart(2, '0') + '-' + dd.padStart(2, '0') + 'T' + time + ':00';
+  const date = new Date(iso);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function parseDayMonthYear(value) {
+  const match = String(value || '').trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!match) {
+    return null;
+  }
+  return {
+    day: parseInt(match[1], 10),
+    month: parseInt(match[2], 10) - 1,
+    year: parseInt(match[3], 10)
+  };
+}
+
+function bookingKeyFromParts(year, month, day) {
+  return String(year) + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+}
+
+function bookingKeyFromDateString(value) {
+  const parts = parseDayMonthYear(value);
+  return parts ? bookingKeyFromParts(parts.year, parts.month, parts.day) : '';
+}
+
+function headerIndexMap(headers) {
+  const map = {};
+  headers.forEach(function(header, index) {
+    map[String(header || '').trim().toLowerCase()] = index;
+  });
+  return map;
+}
+
+function normalizeHeaderValue(value) {
+  return String(value || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
+}
+
+function getCell(row, map, keys) {
+  for (let i = 0; i < keys.length; i += 1) {
+    const idx = map[keys[i]];
+    if (idx !== undefined) {
+      return row[idx] || '';
     }
+  }
 
-    function validateHeaders(rows) {
-      if (!rows.length) {
-        throw new Error('The sheet is empty.');
-      }
-      const headers = headerIndexMap(rows[0]);
-      const required = ['date'];
-      required.forEach(function(key) {
-        if (headers[key] === undefined) {
-          throw new Error('Missing required column: ' + key);
-        }
-      });
+  const mapKeys = Object.keys(map);
+  for (let i = 0; i < keys.length; i += 1) {
+    const normalizedKey = normalizeHeaderValue(keys[i]);
+    const found = mapKeys.find(function(k) {
+      const normalizedHeader = normalizeHeaderValue(k);
+      return normalizedHeader.includes(normalizedKey) || normalizedKey.includes(normalizedHeader);
+    });
+    if (found) {
+      return row[map[found]] || '';
     }
+  }
 
-    function scheduleRender() {
-      clearTimeout(renderDebounceTimer);
-      renderDebounceTimer = setTimeout(render, 200);
-    }
+  return '';
+}
 
-    function getUpcomingRows(rows) {
-      const now = new Date();
-      return rows
-        .map(function(item) {
-          return { item: item, dateValue: parseDateValue(item.date, item.start) };
-        })
-        .filter(function(entry) {
-          return entry.dateValue && entry.dateValue.getTime() >= now.getTime();
-        })
-        .sort(function(a, b) {
-          return a.dateValue.getTime() - b.dateValue.getTime();
-        });
-    }
+function sanitizePlayers(value) {
+  return String(value || '').trim();
+}
 
-    function getNextBookingKey(rows) {
-      const upcoming = getUpcomingRows(rows);
-      if (!upcoming.length) {
-        return '';
-      }
-      return bookingKeyFromDateString(upcoming[0].item.date);
-    }
+function compactPlayers(values) {
+  return values
+    .map(function(value) { return String(value || '').trim(); })
+    .filter(Boolean)
+    .join(', ');
+}
 
-    function getCountdownParts(ms) {
-      const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-      const days = Math.floor(totalSeconds / 86400);
-      const hours = Math.floor((totalSeconds % 86400) / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
+function countPlayers(playersValue) {
+  const raw = String(playersValue || '').trim();
+  if (!raw) {
+    return 0;
+  }
+  return raw
+    .split(/[,+]/)
+    .map(function(part) { return String(part || '').trim(); })
+    .filter(Boolean)
+    .length;
+}
+
+function hasLessThanFourPlayers(item) {
+  return countPlayers(item.players) < 4;
+}
+
+function rowsFromCsv(text) {
+  const rows = parseCSV(text);
+  if (!rows.length) {
+    return [];
+  }
+
+  validateHeaders(rows);
+  const headers = headerIndexMap(rows[0]);
+  return rows.slice(1)
+    .filter(function(row) {
+      return row.some(function(cell) { return String(cell || '').trim(); });
+    })
+    .map(function(row) {
+      const player1 = getCell(row, headers, ['player 1', 'player1']);
+      const player2 = getCell(row, headers, ['player 2', 'player2']);
+      const player3 = getCell(row, headers, ['player 3', 'player3']);
+      const player4 = getCell(row, headers, ['player 4', 'player4']);
+      const combinedPlayers = getCell(row, headers, ['players', 'player names']);
+      const players = compactPlayers([player1, player2, player3, player4]) || sanitizePlayers(combinedPlayers);
+
       return {
-        days: String(days).padStart(2, '0'),
-        hours: String(hours).padStart(2, '0'),
-        minutes: String(minutes).padStart(2, '0'),
-        seconds: String(seconds).padStart(2, '0')
+        day: getCell(row, headers, ['day']),
+        date: getCell(row, headers, ['date']),
+        start: normaliseTime(getCell(row, headers, ['start time', 'start'])),
+        end: normaliseTime(getCell(row, headers, ['end time', 'end'])),
+        duration: getCell(row, headers, ['duration (min)', 'duration']),
+        location: getCell(row, headers, ['location']),
+        court: getCell(row, headers, ['court']),
+        players: players
       };
-    }
+    })
+    .filter(function(row) {
+      return isValidSheetDate(row.date);
+    });
+}
 
-    function setFlipValue(unit, value) {
-      const card = flipCardEls[unit];
-      if (!card) {
-        return;
+async function fetchCsv(url) {
+  const response = await fetch(url, { method: 'GET', cache: 'no-store', mode: 'cors' });
+  if (!response.ok) {
+    throw new Error('Request failed with status ' + response.status);
+  }
+  return await response.text();
+}
+
+async function fetchFirstWorkingCsv(urls) {
+  const errors = [];
+  for (let i = 0; i < urls.length; i += 1) {
+    try {
+      return await fetchCsv(urls[i]);
+    } catch (error) {
+      errors.push(error.message);
+    }
+  }
+  if (window.location.protocol === 'file:') {
+    throw new Error('This page is opened as a local file. Open it from GitHub Pages, Vercel, Netlify, or a local web server.');
+  }
+  throw new Error(errors.join(' | '));
+}
+
+function setLoading(message) {
+  const div = document.createElement('div');
+  div.className = 'loading';
+  div.textContent = message;
+  contentEl.replaceChildren(div);
+}
+
+function splitPlayers(playersValue) {
+  return String(playersValue || '')
+    .split(/[,+&/]/)
+    .map(function(player) { return String(player || '').trim(); })
+    .filter(Boolean);
+}
+
+function normalizePlayerName(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function playerMatchesItem(item, playerName) {
+  if (!playerName) {
+    return true;
+  }
+  const selected = normalizePlayerName(playerName);
+  return splitPlayers(item.players).some(function(player) {
+    return normalizePlayerName(player) === selected;
+  });
+}
+
+function getUniquePlayers(rows) {
+  const seen = {};
+  rows.forEach(function(item) {
+    splitPlayers(item.players).forEach(function(player) {
+      const key = normalizePlayerName(player);
+      if (key && !seen[key]) {
+        seen[key] = player;
       }
-      const middle = card.querySelector('.flip-value');
+    });
+  });
 
-      if (previousCountdownValues[unit] === value) {
-        middle.textContent = value;
-        return;
-      }
+  return Object.keys(seen)
+    .sort(function(a, b) { return seen[a].localeCompare(seen[b]); })
+    .map(function(key) { return seen[key]; });
+}
 
-      middle.textContent = value;
-      card.classList.remove('flipping');
-      void card.offsetWidth;
-      card.classList.add('flipping');
-      previousCountdownValues[unit] = value;
+function selectPlayer(playerName) {
+  selectedPlayer = selectedPlayer === playerName ? '' : playerName;
+  selectedBookingDate = '';
+  calendarMonth = null;
+  render();
+}
+
+function buildPlayerChips(rows) {
+  const players = getUniquePlayers(rows);
+  const wrapper = document.createElement('div');
+  wrapper.className = 'player-chip-bar';
+
+  if (selectedPlayer) {
+    const clearBtn = document.createElement('button');
+    clearBtn.type = 'button';
+    clearBtn.className = 'clear-player-chip';
+    clearBtn.textContent = 'Show all';
+    clearBtn.addEventListener('click', function() {
+      selectPlayer('');
+    });
+    wrapper.appendChild(clearBtn);
+  }
+
+  players.forEach(function(player) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'player-chip';
+    if (player === selectedPlayer) {
+      btn.classList.add('is-active');
     }
+    btn.textContent = player;
+    applyPlayerChipColor(btn, player);
+    btn.title = 'Show games for ' + player;
+    btn.addEventListener('click', function() {
+      selectPlayer(player);
+    });
+    wrapper.appendChild(btn);
+  });
+
+  return wrapper;
+}
+
+function assignUniquePlayerColors(rows) {
+  const players = getUniquePlayers(rows);
+  playerHueMap = {};
+  players.forEach(function(player, index) {
+    playerHueMap[normalizePlayerName(player)] = (index * 360) / players.length;
+  });
+}
+
+function getPlayerHue(playerName) {
+  const key = normalizePlayerName(playerName);
+  if (playerHueMap[key] === undefined) {
+    assignUniquePlayerColors(data);
+  }
+  return playerHueMap[key] !== undefined ? playerHueMap[key] : 138;
+}
+
+function applyPlayerChipColor(element, playerName) {
+  element.style.setProperty('--chip-hue', String(getPlayerHue(playerName)));
+}
+
+function getBookingRelativeLabel(dateStr) {
+  const parts = parseDayMonthYear(dateStr);
+  if (!parts) {
+    return '';
+  }
+
+  const bookingDate = new Date(parts.year, parts.month, parts.day);
+  const today = new Date();
+  const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const tomorrowOnly = new Date(todayOnly);
+  tomorrowOnly.setDate(todayOnly.getDate() + 1);
+
+  if (bookingDate.getTime() === todayOnly.getTime()) {
+    return 'today';
+  }
+  if (bookingDate.getTime() === tomorrowOnly.getTime()) {
+    return 'tomorrow';
+  }
+  return '';
+}
+
+function buildShareText(item) {
+  const dateLabel = [item.day, formatShortDate(item.date)].filter(Boolean).join(' ');
+  const timeLabel = [formatToAMPM(item.start), formatToAMPM(item.end)].filter(Boolean).join(' - ');
+  const locationLabel = [item.location, item.court ? 'Court ' + item.court : ''].filter(Boolean).join(' - ');
+  const playersArray = splitPlayers(item.players);
+  const playerCount = playersArray.length;
+  const maxPlayers = 4;
+  const spotsLeft = Math.max(0, maxPlayers - playerCount);
+  const playersBlock = playersArray.length
+    ? playersArray.map(function(player) { return '- ' + player; }).join('\n')
+    : '- Open slots';
+  const relativeLabel = getBookingRelativeLabel(item.date);
+  const baseTitle = playerCount < maxPlayers ? 'Setting up a game' : 'See you on court';
+  const title = relativeLabel ? baseTitle + ' ' + relativeLabel + '!' : baseTitle + '!';
+  const message = [
+    title,
+    '',
+    'Date: ' + dateLabel,
+    'Time: ' + timeLabel,
+    'Place: ' + locationLabel,
+    '',
+    'Players (' + playerCount + '/' + maxPlayers + '):',
+    playersBlock
+  ];
+
+  if (spotsLeft > 0) {
+    message.push('', spotsLeft + ' spot' + (spotsLeft === 1 ? '' : 's') + ' left!');
+  }
+
+  return message.join('\n');
+}
+
+function shareOnWhatsApp(item) {
+  const text = buildShareText(item);
+  const url = 'https://wa.me/?text=' + encodeURIComponent(text);
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+function wrapSection(title, subtitle, child, className) {
+  const section = document.createElement('section');
+  section.className = 'section-card ' + (className || '');
+
+  if (title || subtitle) {
+    const label = document.createElement('div');
+    label.className = 'section-label';
+    const titleEl = document.createElement('div');
+    titleEl.className = 'section-title';
+    titleEl.textContent = title;
+    label.appendChild(titleEl);
 
-    function setFlipLiveState() {
-      ['days', 'hours', 'minutes', 'seconds'].forEach(function(unit) {
-        setFlipValue(unit, unit === 'seconds' ? 'GO' : '00');
-      });
-    }
-
-    function updateNextGameBanner(rows) {
-      clearInterval(countdownInterval);
-      const upcoming = getUpcomingRows(rows);
-      if (!upcoming.length) {
-        nextGameBannerEl.style.display = 'none';
-        return;
-      }
-
-      const nextGame = upcoming[0];
-      const item = nextGame.item;
-      const eventDate = nextGame.dateValue;
-
-      function paintCountdown() {
-        const diff = eventDate.getTime() - Date.now();
-        if (diff <= 0) {
-          setFlipLiveState();
-          return;
-        }
-        const parts = getCountdownParts(diff);
-        setFlipValue('days', parts.days);
-        setFlipValue('hours', parts.hours);
-        setFlipValue('minutes', parts.minutes);
-        setFlipValue('seconds', parts.seconds);
-      }
-
-      const dateLabel = [item.day, formatShortDate(item.date)].filter(Boolean).join(' • ');
-      const timeLabel = formatToAMPM(item.start) || '--';
-      const locationLabel = [item.location, item.court ? 'Court ' + item.court : ''].filter(Boolean).join(' • ') || '--';
-
-      if (nextGameDateChipEl) {
-        nextGameDateChipEl.textContent = dateLabel || '--';
-      }
-      if (nextGameTimeChipEl) {
-        nextGameTimeChipEl.textContent = timeLabel;
-      }
-      if (nextGameLocationTextEl) {
-        nextGameLocationTextEl.textContent = locationLabel;
-      }
-
-      nextGameBannerEl.style.display = 'block';
-      paintCountdown();
-      countdownInterval = setInterval(paintCountdown, 1000);
-    }
-
-    function showNotice(message) {
-      noticeEl.textContent = message;
-      noticeEl.style.display = 'block';
-    }
-
-    function hideNotice() {
-      noticeEl.textContent = '';
-      noticeEl.style.display = 'none';
-    }
-
-    function parseCSV(text) {
-      const rows = [];
-      let row = [];
-      let cell = '';
-      let inQuotes = false;
-
-      for (let i = 0; i < text.length; i += 1) {
-        const char = text[i];
-        const next = text[i + 1];
-
-        if (char === '"') {
-          if (inQuotes && next === '"') {
-            cell += '"';
-            i += 1;
-          } else {
-            inQuotes = !inQuotes;
-          }
-        } else if (char === ',' && !inQuotes) {
-          row.push(cell);
-          cell = '';
-        } else if ((char === '\n' || char === '\r') && !inQuotes) {
-          if (char === '\r' && next === '\n') {
-            i += 1;
-          }
-          row.push(cell);
-          rows.push(row);
-          row = [];
-          cell = '';
-        } else {
-          cell += char;
-        }
-      }
-
-      if (cell.length > 0 || row.length > 0) {
-        row.push(cell);
-        rows.push(row);
-      }
-
-      return rows;
-    }
-
-    function normaliseTime(value) {
-      if (value === null || value === undefined || value === '') {
-        return '';
-      }
-      const str = String(value).trim();
-      if (/^\d{1,2}:\d{2}$/.test(str)) {
-        const parts = str.split(':');
-        return parts[0].padStart(2, '0') + ':' + parts[1];
-      }
-      if (/^\d{1,2}$/.test(str)) {
-        return str.padStart(2, '0') + ':00';
-      }
-      return str;
-    }
-
-
-    function formatToAMPM(timeStr) {
-      if (!timeStr) {
-        return '';
-      }
-
-      const parts = String(timeStr).trim().split(':');
-      if (parts.length < 2) {
-        return timeStr;
-      }
-
-      const hours = Number(parts[0]);
-      const minutes = Number(parts[1]);
-
-      if (Number.isNaN(hours) || Number.isNaN(minutes)) {
-        return timeStr;
-      }
-
-      const period = hours >= 12 ? 'PM' : 'AM';
-      const hours12 = hours % 12 === 0 ? 12 : hours % 12;
-
-      return String(hours12) + ':' + String(minutes).padStart(2, '0') + ' ' + period;
-    }
-
-    function isValidSheetDate(value) {
-      return /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(String(value || '').trim());
-    }
-
-    function formatShortDate(value) {
-      if (!isValidSheetDate(value)) {
-        return value || '';
-      }
-      const parts = String(value).trim().split('/');
-      const day = parts[0].padStart(2, '0');
-      const monthIndex = parseInt(parts[1], 10) - 1;
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const month = months[monthIndex] || parts[1];
-      return day + ' ' + month;
-    }
-
-    function parseDateValue(dateStr, timeStr) {
-      if (!isValidSheetDate(dateStr)) {
-        return null;
-      }
-      const match = String(dateStr).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-      if (!match) {
-        return null;
-      }
-      const dd = match[1];
-      const mm = match[2];
-      const yyyy = match[3];
-      const time = normaliseTime(timeStr || '00:00') || '00:00';
-      const iso = yyyy + '-' + mm.padStart(2, '0') + '-' + dd.padStart(2, '0') + 'T' + time + ':00';
-      const date = new Date(iso);
-      return Number.isNaN(date.getTime()) ? null : date;
-    }
-
-    function parseDayMonthYear(value) {
-      const match = String(value || '').trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-      if (!match) {
-        return null;
-      }
-      return {
-        day: parseInt(match[1], 10),
-        month: parseInt(match[2], 10) - 1,
-        year: parseInt(match[3], 10)
-      };
-    }
-
-    function bookingKeyFromParts(year, month, day) {
-      return String(year) + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
-    }
-
-    function bookingKeyFromDateString(value) {
-      const parts = parseDayMonthYear(value);
-      if (!parts) {
-        return '';
-      }
-      return bookingKeyFromParts(parts.year, parts.month, parts.day);
-    }
-
-    function headerIndexMap(headers) {
-      const map = {};
-      headers.forEach(function(header, index) {
-        map[String(header || '').trim().toLowerCase()] = index;
-      });
-      return map;
-    }
-
-    function normalizeHeaderValue(value) {
-      return String(value || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
-    }
-
-    function getCell(row, map, keys) {
-      for (let i = 0; i < keys.length; i += 1) {
-        const idx = map[keys[i]];
-        if (idx !== undefined) {
-          return row[idx] || '';
-        }
-      }
-
-      const mapKeys = Object.keys(map);
-      for (let i = 0; i < keys.length; i += 1) {
-        const normalizedKey = normalizeHeaderValue(keys[i]);
-        const found = mapKeys.find(function(k) {
-          const normalizedHeader = normalizeHeaderValue(k);
-          return normalizedHeader.includes(normalizedKey) || normalizedKey.includes(normalizedHeader);
-        });
-        if (found) {
-          const idx = map[found];
-          return row[idx] || '';
-        }
-      }
-
-      return '';
-    }
-
-    function sanitizePlayers(value) {
-      return String(value || '').trim();
-    }
-
-    function compactPlayers(values) {
-      return values
-        .map(function(value) { return String(value || '').trim(); })
-        .filter(Boolean)
-        .join(', ');
-    }
-
-    function countPlayers(playersValue) {
-      const raw = String(playersValue || '').trim();
-      if (!raw) {
-        return 0;
-      }
-      return raw
-        .split(/[,+]/)
-        .map(function(part) { return String(part || '').trim(); })
-        .filter(Boolean)
-        .length;
-    }
-
-    function hasLessThanFourPlayers(item) {
-      return countPlayers(item.players) < 4;
-    }
-
-    function rowsFromCsv(text) {
-      const rows = parseCSV(text);
-      if (!rows.length) {
-        return [];
-      }
-
-      validateHeaders(rows);
-      const headers = headerIndexMap(rows[0]);
-      return rows.slice(1)
-        .filter(function(row) {
-          return row.some(function(cell) { return String(cell || '').trim(); });
-        })
-        .map(function(row) {
-          const player1 = getCell(row, headers, ['player 1', 'player1']);
-          const player2 = getCell(row, headers, ['player 2', 'player2']);
-          const player3 = getCell(row, headers, ['player 3', 'player3']);
-          const player4 = getCell(row, headers, ['player 4', 'player4']);
-          const combinedPlayers = getCell(row, headers, ['players', 'player names']);
-          const players = compactPlayers([player1, player2, player3, player4]) || sanitizePlayers(combinedPlayers);
-
-          return {
-            day: getCell(row, headers, ['day']),
-            date: getCell(row, headers, ['date']),
-            start: normaliseTime(getCell(row, headers, ['start time', 'start'])),
-            end: normaliseTime(getCell(row, headers, ['end time', 'end'])),
-            duration: getCell(row, headers, ['duration (min)', 'duration']),
-            location: getCell(row, headers, ['location']),
-            court: getCell(row, headers, ['court']),
-            players: players
-          };
-        })
-        .filter(function(row) {
-          return isValidSheetDate(row.date);
-        });
-    }
-
-    async function fetchCsv(url) {
-      const response = await fetch(url, { method: 'GET', cache: 'no-store', mode: 'cors' });
-      if (!response.ok) {
-        throw new Error('Request failed with status ' + response.status);
-      }
-      return await response.text();
-    }
-
-    async function fetchFirstWorkingCsv(urls) {
-      const errors = [];
-      for (let i = 0; i < urls.length; i += 1) {
-        try {
-          return await fetchCsv(urls[i]);
-        } catch (error) {
-          errors.push(error.message);
-        }
-      }
-      if (window.location.protocol === 'file:') {
-        throw new Error('This page is opened as a local file. Open it from GitHub Pages, Vercel, Netlify, or a local web server.');
-      }
-      throw new Error(errors.join(' | '));
-    }
-
-    function setLoading(message) {
-      const div = document.createElement('div');
-      div.className = 'loading';
-      div.textContent = message;
-      contentEl.replaceChildren(div);
-    }
-
-    function setEmpty(message) {
-      const div = document.createElement('div');
-      div.className = 'empty';
-      div.textContent = message;
-      contentEl.replaceChildren(div);
-    }
-
-
-
-    function splitPlayers(playersValue) {
-      return String(playersValue || '')
-        .split(/[,+&/]/)
-        .map(function(player) { return String(player || '').trim(); })
-        .filter(Boolean);
-    }
-
-    function normalizePlayerName(value) {
-      return String(value || '').trim().toLowerCase();
-    }
-
-    function playerMatchesItem(item, playerName) {
-      if (!playerName) {
-        return true;
-      }
-      const selected = normalizePlayerName(playerName);
-      return splitPlayers(item.players).some(function(player) {
-        return normalizePlayerName(player) === selected;
-      });
-    }
-
-    function getUniquePlayers(rows) {
-      const seen = {};
-      rows.forEach(function(item) {
-        splitPlayers(item.players).forEach(function(player) {
-          const key = normalizePlayerName(player);
-          if (key && !seen[key]) {
-            seen[key] = player;
-          }
-        });
-      });
-
-      return Object.keys(seen)
-        .sort(function(a, b) { return seen[a].localeCompare(seen[b]); })
-        .map(function(key) { return seen[key]; });
-    }
-
-    function selectPlayer(playerName) {
-      selectedPlayer = selectedPlayer === playerName ? '' : playerName;
-      selectedBookingDate = '';
-      calendarMonth = null;
-      render();
-    }
-
-    function buildPlayerChips(rows) {
-      const players = getUniquePlayers(rows);
-      const wrapper = document.createElement('div');
-      wrapper.className = 'player-chip-bar';
-
-      if (selectedPlayer) {
-        const clearBtn = document.createElement('button');
-        clearBtn.type = 'button';
-        clearBtn.className = 'clear-player-chip';
-        clearBtn.textContent = 'Show all';
-        clearBtn.addEventListener('click', function() {
-          selectPlayer('');
-        });
-        wrapper.appendChild(clearBtn);
-      }
-
-      players.forEach(function(player) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'player-chip';
-        if (player === selectedPlayer) {
-          btn.classList.add('is-active');
-        }
-        btn.textContent = player;
-        applyPlayerChipColor(btn, player);
-        btn.title = 'Show games for ' + player;
-        btn.addEventListener('click', function() {
-          selectPlayer(player);
-        });
-        wrapper.appendChild(btn);
-      });
-
-      return wrapper;
-    }
-
-
-    function assignUniquePlayerColors(rows) {
-      const players = getUniquePlayers(rows);
-      playerHueMap = {};
-
-      if (!players.length) {
-        return;
-      }
-
-      players.forEach(function(player, index) {
-        // Evenly spread all current players across the full color wheel.
-        // This guarantees no duplicate hue for the current player list.
-        const hue = (index * 360) / players.length;
-        playerHueMap[normalizePlayerName(player)] = hue;
-      });
-    }
-
-    function getPlayerHue(playerName) {
-      const key = normalizePlayerName(playerName);
-      if (playerHueMap[key] === undefined) {
-        assignUniquePlayerColors(data);
-      }
-      return playerHueMap[key] !== undefined ? playerHueMap[key] : 138;
-    }
-
-    function applyPlayerChipColor(element, playerName) {
-      element.style.setProperty('--chip-hue', String(getPlayerHue(playerName)));
-    }
-
-    function getBookingRelativeLabel(dateStr) {
-      const parts = parseDayMonthYear(dateStr);
-      if (!parts) {
-        return '';
-      }
-
-      const bookingDate = new Date(parts.year, parts.month, parts.day);
-      const today = new Date();
-      const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      const tomorrowOnly = new Date(todayOnly);
-      tomorrowOnly.setDate(todayOnly.getDate() + 1);
-
-      if (bookingDate.getTime() === todayOnly.getTime()) {
-        return 'today';
-      }
-
-      if (bookingDate.getTime() === tomorrowOnly.getTime()) {
-        return 'tomorrow';
-      }
-
-      return '';
-    }
-
-    function buildShareText(item) {
-      const dateLabel = [item.day, formatShortDate(item.date)]
-        .filter(Boolean)
-        .join(' ');
-
-      const timeLabel = [formatToAMPM(item.start), formatToAMPM(item.end)]
-        .filter(Boolean)
-        .join(' - ');
-
-      const locationLabel = [item.location, item.court ? 'Court ' + item.court : '']
-        .filter(Boolean)
-        .join(' • ');
-
-      const playersArray = splitPlayers(item.players);
-      const playerCount = playersArray.length;
-      const maxPlayers = 4;
-      const spotsLeft = Math.max(0, maxPlayers - playerCount);
-
-      const playersBlock = playersArray.length
-        ? playersArray.map(function(player) { return '- ' + player; }).join('\n')
-        : '- Open slots';
-
-      const relativeLabel = getBookingRelativeLabel(item.date);
-      const baseTitle = playerCount < maxPlayers ? '🎾 Setting up a game' : '🎾 See you on court';
-      const title = relativeLabel ? baseTitle + ' ' + relativeLabel + '!' : baseTitle + '!';
-
-      const message = [
-        title,
-        '',
-        '📅 ' + dateLabel,
-        '⏰ ' + timeLabel,
-        '📍 ' + locationLabel,
-        '',
-        '👥 Players (' + playerCount + '/' + maxPlayers + '):',
-        playersBlock
-      ];
-
-      if (spotsLeft > 0) {
-        message.push('', '🚨 ' + spotsLeft + ' spot' + (spotsLeft === 1 ? '' : 's') + ' left!');
-      }
-
-      return message.join('\n');
-    }
-
-    function shareOnWhatsApp(item) {
-      const text = buildShareText(item);
-      const url = 'https://wa.me/?text=' + encodeURIComponent(text);
-      window.open(url, '_blank', 'noopener,noreferrer');
-    }
-
-    function wrapSection(title, subtitle, child, className) {
-      const section = document.createElement('section');
-      section.className = 'section-card ' + (className || '');
-
-      const label = document.createElement('div');
-      label.className = 'section-label';
-
-      const titleEl = document.createElement('div');
-      titleEl.className = 'section-title';
-      titleEl.textContent = title;
-
+    if (subtitle) {
       const subtitleEl = document.createElement('div');
       subtitleEl.className = 'section-subtitle';
-      subtitleEl.textContent = subtitle || '';
-
-      label.appendChild(titleEl);
-      if (subtitle) {
-        label.appendChild(subtitleEl);
-      }
-
-      section.appendChild(label);
-      section.appendChild(child);
-      return section;
+      subtitleEl.textContent = subtitle;
+      label.appendChild(subtitleEl);
     }
 
-    function buildTable(rows) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'table-wrap';
-      wrapper.id = 'schedule-table';
-      const table = document.createElement('table');
-      const thead = document.createElement('thead');
-      const tbody = document.createElement('tbody');
-      const headerRow = document.createElement('tr');
-      const headers = ['', 'Date', 'Time', 'Location', 'Players', 'Share'];
+    section.appendChild(label);
+  }
 
-      headers.forEach(function(label) {
-        const th = document.createElement('th');
-        if (label === '') {
-          th.className = 'availability-col';
+  section.appendChild(child);
+  return section;
+}
+
+function buildTable(rows) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'table-wrap';
+  wrapper.id = 'schedule-table';
+  const table = document.createElement('table');
+  const thead = document.createElement('thead');
+  const tbody = document.createElement('tbody');
+  const headerRow = document.createElement('tr');
+  const headers = ['', 'Date', 'Time', 'Location', 'Players', 'Share'];
+
+  headers.forEach(function(label) {
+    const th = document.createElement('th');
+    if (label === '') {
+      th.className = 'availability-col';
+    }
+    if (label === 'Share') {
+      th.className = 'share-col';
+    }
+    th.textContent = label;
+    headerRow.appendChild(th);
+  });
+  thead.appendChild(headerRow);
+
+  rows.forEach(function(item) {
+    const tr = document.createElement('tr');
+    const bookingKey = bookingKeyFromDateString(item.date);
+    tr.dataset.bookingDate = bookingKey;
+    if (selectedBookingDate && bookingKey === selectedBookingDate) {
+      tr.classList.add('is-selected');
+    }
+
+    const availabilityTd = document.createElement('td');
+    availabilityTd.className = 'availability-cell';
+    if (hasLessThanFourPlayers(item)) {
+      const icon = document.createElement('span');
+      icon.className = 'availability-icon';
+      icon.textContent = '!';
+      icon.title = 'Less than 4 players';
+      availabilityTd.appendChild(icon);
+    }
+    tr.appendChild(availabilityTd);
+
+    const dateTd = document.createElement('td');
+    dateTd.textContent = [item.day, formatShortDate(item.date)].filter(Boolean).join(' ');
+    tr.appendChild(dateTd);
+
+    const timeTd = document.createElement('td');
+    const formattedStart = formatToAMPM(item.start || '');
+    const formattedEnd = formatToAMPM(item.end || '');
+    timeTd.textContent = formattedStart && formattedEnd ? formattedStart + ' - ' + formattedEnd : (formattedStart || formattedEnd);
+    tr.appendChild(timeTd);
+
+    const locationCourtTd = document.createElement('td');
+    locationCourtTd.textContent = (item.location || '') + (item.court ? ' # ' + item.court : '');
+    tr.appendChild(locationCourtTd);
+
+    const playersTd = document.createElement('td');
+    const playersWrap = document.createElement('div');
+    playersWrap.className = 'players-cell';
+    const rowPlayers = splitPlayers(item.players);
+
+    if (rowPlayers.length) {
+      rowPlayers.forEach(function(player) {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'table-player-chip';
+        if (player === selectedPlayer) {
+          chip.classList.add('is-active');
         }
-        if (label === 'Share') {
-          th.className = 'share-col';
-        }
-        th.textContent = label;
-        headerRow.appendChild(th);
-      });
-      thead.appendChild(headerRow);
-
-      rows.forEach(function(item) {
-        const tr = document.createElement('tr');
-        const bookingKey = bookingKeyFromDateString(item.date);
-        tr.dataset.bookingDate = bookingKey;
-        if (selectedBookingDate && bookingKey === selectedBookingDate) {
-          tr.classList.add('is-selected');
-        }
-
-        const availabilityTd = document.createElement('td');
-        availabilityTd.className = 'availability-cell';
-        if (hasLessThanFourPlayers(item)) {
-          const icon = document.createElement('span');
-          icon.className = 'availability-icon';
-          icon.textContent = '⚠';
-          icon.title = 'Less than 4 players';
-          availabilityTd.appendChild(icon);
-        }
-        tr.appendChild(availabilityTd);
-
-        const dateTd = document.createElement('td');
-        dateTd.textContent = [item.day, formatShortDate(item.date)].filter(Boolean).join(' ');
-        tr.appendChild(dateTd);
-
-        const timeTd = document.createElement('td');
-        const start = item.start || '';
-        const end = item.end || '';
-        const formattedStart = formatToAMPM(start);
-        const formattedEnd = formatToAMPM(end);
-        const timeText = formattedStart && formattedEnd ? formattedStart + ' - ' + formattedEnd : (formattedStart || formattedEnd);
-        timeTd.textContent = timeText;
-        tr.appendChild(timeTd);
-
-        const locationCourtTd = document.createElement('td');
-        const locationText = item.location || '';
-        const courtText = item.court ? ' # ' + item.court : '';
-        locationCourtTd.textContent = locationText + courtText;
-        tr.appendChild(locationCourtTd);
-
-        const playersTd = document.createElement('td');
-        const playersWrap = document.createElement('div');
-        playersWrap.className = 'players-cell';
-        const rowPlayers = splitPlayers(item.players);
-
-        if (rowPlayers.length) {
-          rowPlayers.forEach(function(player) {
-            const chip = document.createElement('button');
-            chip.type = 'button';
-            chip.className = 'table-player-chip';
-            if (player === selectedPlayer) {
-              chip.classList.add('is-active');
-            }
-            chip.textContent = player;
-            applyPlayerChipColor(chip, player);
-            chip.title = 'Show games for ' + player;
-            chip.addEventListener('click', function() {
-              selectPlayer(player);
-            });
-            playersWrap.appendChild(chip);
-          });
-        } else {
-          playersWrap.textContent = '--';
-        }
-
-        playersTd.appendChild(playersWrap);
-        tr.appendChild(playersTd);
-
-
-        const shareTd = document.createElement('td');
-        shareTd.className = 'share-cell';
-        const shareBtn = document.createElement('button');
-        shareBtn.type = 'button';
-        shareBtn.className = 'whatsapp-share-btn';
-        shareBtn.title = 'Share on WhatsApp';
-        shareBtn.setAttribute('aria-label', 'Share on WhatsApp');
-        shareBtn.innerHTML = `<svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-  <path fill="white" d="M16.001 3.2c-7.055 0-12.801 5.746-12.801 12.8 0 2.258.593 4.461 1.723 6.404L3.2 28.8l6.587-1.701a12.73 12.73 0 0 0 6.214 1.602c7.055 0 12.799-5.746 12.799-12.801 0-7.054-5.744-12.7-12.799-12.7zm0 23.201c-1.928 0-3.814-.52-5.46-1.503l-.39-.232-3.907 1.009 1.041-3.808-.255-.393a10.36 10.36 0 0 1-1.588-5.474c0-5.743 4.674-10.417 10.559-10.417 5.823 0 10.559 4.674 10.559 10.417 0 5.743-4.736 10.401-10.559 10.401zm5.79-7.84c-.316-.158-1.872-.925-2.163-1.03-.29-.106-.5-.158-.711.158-.211.316-.816 1.03-1.001 1.242-.185.211-.369.237-.685.079-.316-.158-1.334-.491-2.54-1.566-.938-.835-1.571-1.867-1.755-2.183-.185-.316-.02-.487.138-.645.143-.143.316-.369.474-.553.158-.185.211-.316.316-.527.106-.211.053-.395-.026-.553-.079-.158-.711-1.716-.974-2.353-.256-.616-.516-.533-.711-.543l-.606-.011c-.211 0-.553.079-.842.395-.29.316-1.106 1.079-1.106 2.632 0 1.553 1.132 3.053 1.29 3.263.158.211 2.228 3.402 5.401 4.77.755.326 1.344.52 1.804.665.758.241 1.448.207 1.993.126.608-.09 1.872-.765 2.136-1.504.264-.738.264-1.371.185-1.504-.079-.132-.29-.211-.606-.369z"/>
-</svg>`;
-        shareBtn.addEventListener('click', function() {
-          shareOnWhatsApp(item);
+        chip.textContent = player;
+        applyPlayerChipColor(chip, player);
+        chip.title = 'Show games for ' + player;
+        chip.addEventListener('click', function() {
+          selectPlayer(player);
         });
-        shareTd.appendChild(shareBtn);
-        tr.appendChild(shareTd);
-
-        tbody.appendChild(tr);
+        playersWrap.appendChild(chip);
       });
-
-      table.appendChild(thead);
-      table.appendChild(tbody);
-      wrapper.appendChild(table);
-      return wrapper;
+    } else {
+      playersWrap.textContent = '--';
     }
 
-    function getBookedDateCounts(rows) {
-      const counts = {};
-      rows.forEach(function(item) {
-        const key = bookingKeyFromDateString(item.date);
-        if (key) {
-          counts[key] = (counts[key] || 0) + 1;
-        }
-      });
-      return counts;
-    }
+    playersTd.appendChild(playersWrap);
+    tr.appendChild(playersTd);
 
-    function getCalendarAnchorMonth(rows) {
-      if (!rows.length) {
-        const now = new Date();
-        return { year: now.getFullYear(), month: now.getMonth() };
+    const shareTd = document.createElement('td');
+    shareTd.className = 'share-cell';
+    const shareBtn = document.createElement('button');
+    shareBtn.type = 'button';
+    shareBtn.className = 'whatsapp-share-btn';
+    shareBtn.title = 'Share on WhatsApp';
+    shareBtn.setAttribute('aria-label', 'Share on WhatsApp');
+    shareBtn.innerHTML = '<svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path fill="white" d="M16.001 3.2c-7.055 0-12.801 5.746-12.801 12.8 0 2.258.593 4.461 1.723 6.404L3.2 28.8l6.587-1.701a12.73 12.73 0 0 0 6.214 1.602c7.055 0 12.799-5.746 12.799-12.801 0-7.054-5.744-12.7-12.799-12.7zm0 23.201c-1.928 0-3.814-.52-5.46-1.503l-.39-.232-3.907 1.009 1.041-3.808-.255-.393a10.36 10.36 0 0 1-1.588-5.474c0-5.743 4.674-10.417 10.559-10.417 5.823 0 10.559 4.674 10.559 10.417 0 5.743-4.736 10.401-10.559 10.401zm5.79-7.84c-.316-.158-1.872-.925-2.163-1.03-.29-.106-.5-.158-.711.158-.211.316-.816 1.03-1.001 1.242-.185.211-.369.237-.685.079-.316-.158-1.334-.491-2.54-1.566-.938-.835-1.571-1.867-1.755-2.183-.185-.316-.02-.487.138-.645.143-.143.316-.369.474-.553.158-.185.211-.316.316-.527.106-.211.053-.395-.026-.553-.079-.158-.711-1.716-.974-2.353-.256-.616-.516-.533-.711-.543l-.606-.011c-.211 0-.553.079-.842.395-.29.316-1.106 1.079-1.106 2.632 0 1.553 1.132 3.053 1.29 3.263.158.211 2.228 3.402 5.401 4.77.755.326 1.344.52 1.804.665.758.241 1.448.207 1.993.126.608-.09 1.872-.765 2.136-1.504.264-.738.264-1.371.185-1.504-.079-.132-.29-.211-.606-.369z"/></svg>';
+    shareBtn.addEventListener('click', function() {
+      shareOnWhatsApp(item);
+    });
+    shareTd.appendChild(shareBtn);
+    tr.appendChild(shareTd);
+
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(thead);
+  table.appendChild(tbody);
+  wrapper.appendChild(table);
+  return wrapper;
+}
+
+function getBookedDateCounts(rows) {
+  const counts = {};
+  rows.forEach(function(item) {
+    const key = bookingKeyFromDateString(item.date);
+    if (key) {
+      counts[key] = (counts[key] || 0) + 1;
+    }
+  });
+  return counts;
+}
+
+function getCalendarAnchorMonth(rows) {
+  if (!rows.length) {
+    const now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth() };
+  }
+  const sorted = rows
+    .map(function(item) { return parseDateValue(item.date, item.start); })
+    .filter(Boolean)
+    .sort(function(a, b) { return a.getTime() - b.getTime(); });
+  const anchor = sorted[0] || new Date();
+  return { year: anchor.getFullYear(), month: anchor.getMonth() };
+}
+
+function monthLabel(year, month) {
+  return new Date(year, month, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+}
+
+function buildCalendar(rows) {
+  const bookedCounts = getBookedDateCounts(rows);
+  const anchor = calendarMonth || getCalendarAnchorMonth(rows);
+  const year = anchor.year;
+  const month = anchor.month;
+  const today = new Date();
+  const firstDay = new Date(year, month, 1);
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstWeekday = firstDay.getDay();
+  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'calendar-wrap';
+
+  const header = document.createElement('div');
+  header.className = 'calendar-header';
+
+  const prevBtn = document.createElement('button');
+  prevBtn.type = 'button';
+  prevBtn.className = 'calendar-nav';
+  prevBtn.textContent = '<';
+  prevBtn.addEventListener('click', function() {
+    calendarMonth = { year: month === 0 ? year - 1 : year, month: month === 0 ? 11 : month - 1 };
+    render();
+  });
+
+  const title = document.createElement('div');
+  title.className = 'calendar-title';
+  title.textContent = monthLabel(year, month);
+
+  const nextBtn = document.createElement('button');
+  nextBtn.type = 'button';
+  nextBtn.className = 'calendar-nav';
+  nextBtn.textContent = '>';
+  nextBtn.addEventListener('click', function() {
+    calendarMonth = { year: month === 11 ? year + 1 : year, month: month === 11 ? 0 : month + 1 };
+    render();
+  });
+
+  header.appendChild(prevBtn);
+  header.appendChild(title);
+  header.appendChild(nextBtn);
+  wrapper.appendChild(header);
+
+  const grid = document.createElement('div');
+  grid.className = 'calendar-grid';
+
+  weekdays.forEach(function(day) {
+    const weekday = document.createElement('div');
+    weekday.className = 'calendar-weekday';
+    weekday.textContent = day;
+    grid.appendChild(weekday);
+  });
+
+  for (let i = 0; i < firstWeekday; i += 1) {
+    const empty = document.createElement('div');
+    empty.className = 'calendar-day is-empty';
+    grid.appendChild(empty);
+  }
+
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    const cell = document.createElement('div');
+    cell.className = 'calendar-day';
+    const key = bookingKeyFromParts(year, month, day);
+    const bookings = bookedCounts[key] || 0;
+    const cellDate = new Date(year, month, day);
+    const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
+    const isPast = cellDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+    if (bookings > 0) {
+      cell.classList.add('is-booked');
+      cell.setAttribute('role', 'button');
+      cell.setAttribute('tabindex', '0');
+      cell.setAttribute('aria-label', 'Show games on ' + day + ' ' + monthLabel(year, month));
+      if (key === getNextBookingKey(rows)) {
+        cell.classList.add('is-next-booking');
       }
-      const sorted = rows
-        .map(function(item) { return parseDateValue(item.date, item.start); })
-        .filter(Boolean)
-        .sort(function(a, b) { return a.getTime() - b.getTime(); });
-      const anchor = sorted[0] || new Date();
-      return { year: anchor.getFullYear(), month: anchor.getMonth() };
-    }
-
-    function monthLabel(year, month) {
-      return new Date(year, month, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
-    }
-
-    function buildCalendar(rows) {
-      const bookedCounts = getBookedDateCounts(rows);
-      const anchor = calendarMonth || getCalendarAnchorMonth(rows);
-      const year = anchor.year;
-      const month = anchor.month;
-      const today = new Date();
-      const firstDay = new Date(year, month, 1);
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const firstWeekday = firstDay.getDay();
-      const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-      const wrapper = document.createElement('div');
-      wrapper.className = 'calendar-wrap';
-
-      const header = document.createElement('div');
-      header.className = 'calendar-header';
-
-      const prevBtn = document.createElement('button');
-      prevBtn.type = 'button';
-      prevBtn.className = 'calendar-nav';
-      prevBtn.textContent = '‹';
-      prevBtn.addEventListener('click', function() {
-        calendarMonth = { year: month === 0 ? year - 1 : year, month: month === 0 ? 11 : month - 1 };
+      cell.addEventListener('click', function() {
+        selectedBookingDate = selectedBookingDate === key ? '' : key;
         render();
-      });
-
-      const title = document.createElement('div');
-      title.className = 'calendar-title';
-      title.textContent = monthLabel(year, month);
-
-      const nextBtn = document.createElement('button');
-      nextBtn.type = 'button';
-      nextBtn.className = 'calendar-nav';
-      nextBtn.textContent = '›';
-      nextBtn.addEventListener('click', function() {
-        calendarMonth = { year: month === 11 ? year + 1 : year, month: month === 11 ? 0 : month + 1 };
-        render();
-      });
-
-      header.appendChild(prevBtn);
-      header.appendChild(title);
-      header.appendChild(nextBtn);
-      wrapper.appendChild(header);
-
-      const grid = document.createElement('div');
-      grid.className = 'calendar-grid';
-
-      weekdays.forEach(function(day) {
-        const weekday = document.createElement('div');
-        weekday.className = 'calendar-weekday';
-        weekday.textContent = day;
-        grid.appendChild(weekday);
-      });
-
-      for (let i = 0; i < firstWeekday; i += 1) {
-        const empty = document.createElement('div');
-        empty.className = 'calendar-day is-empty';
-        grid.appendChild(empty);
-      }
-
-      for (let day = 1; day <= daysInMonth; day += 1) {
-        const cell = document.createElement('div');
-        cell.className = 'calendar-day';
-        const key = bookingKeyFromParts(year, month, day);
-        const bookings = bookedCounts[key] || 0;
-        const cellDate = new Date(year, month, day);
-        const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
-        const isPast = cellDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        if (bookings > 0) {
-          cell.classList.add('is-booked');
-          if (key === getNextBookingKey(rows)) {
-            cell.classList.add('is-next-booking');
+        requestAnimationFrame(function() {
+          const tableWrap = document.getElementById('schedule-table');
+          if (tableWrap) {
+            tableWrap.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
           }
-          cell.addEventListener('click', function() {
-            selectedBookingDate = selectedBookingDate === key ? '' : key;
-            render();
-            requestAnimationFrame(function() {
-              const tableWrap = document.getElementById('schedule-table');
-              if (tableWrap) {
-                tableWrap.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
-              }
-            });
-          });
+        });
+      });
+      cell.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          cell.click();
         }
-        if (selectedBookingDate && key === selectedBookingDate) {
-          cell.classList.add('is-selected');
-        }
-        if (isToday) {
-          cell.classList.add('is-today');
-        }
-        if (isPast) {
-          cell.classList.add('is-past');
-        }
-
-        const number = document.createElement('div');
-        number.className = 'calendar-day-num';
-        number.textContent = String(day);
-        number.setAttribute('data-day', String(day));
-
-        const dayText = document.createElement('span');
-        dayText.className = 'day-text';
-        dayText.textContent = String(day);
-
-        const ballText = document.createElement('span');
-        ballText.className = 'ball-text';
-        ballText.innerHTML = `<svg class="tennis-ball-svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-  <circle cx="32" cy="32" r="24" fill="#b8ff4d"></circle>
-  <path d="M 20 10 C 35 18, 35 46, 20 54" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round"></path>
-  <path d="M 44 10 C 29 18, 29 46, 44 54" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round"></path>
-</svg>`;
-
-        number.appendChild(dayText);
-        number.appendChild(ballText);
-        cell.appendChild(number);
-
-        // Removed booking count text as per requirement
-
-        grid.appendChild(cell);
-      }
-
-      wrapper.appendChild(grid);
-
-      
-
-      return wrapper;
+      });
     }
 
-    function render() {
-      const filtered = data
-        .filter(function(item) {
-          return playerMatchesItem(item, selectedPlayer);
-        })
-        .sort(function(a, b) {
-          const ta = (parseDateValue(a.date, a.start) || new Date(0)).getTime();
-          const tb = (parseDateValue(b.date, b.start) || new Date(0)).getTime();
-          return ta - tb;
-        });
+    if (selectedBookingDate && key === selectedBookingDate) {
+      cell.classList.add('is-selected');
+    }
+    if (isToday) {
+      cell.classList.add('is-today');
+    }
+    if (isPast) {
+      cell.classList.add('is-past');
+    }
 
-      if (!filtered.length) {
-        lastRenderedRows = [];
-        updateNextGameBanner([]);
-        const emptyDiv = document.createElement('div');
-        emptyDiv.className = 'empty';
-        emptyDiv.textContent = selectedPlayer ? 'No games found for ' + selectedPlayer + '.' : 'No games found.';
-        contentEl.replaceChildren(buildPlayerChips(data), emptyDiv);
-        return;
-      }
+    const number = document.createElement('div');
+    number.className = 'calendar-day-num';
+    number.textContent = String(day);
+    number.setAttribute('data-day', String(day));
 
-      lastRenderedRows = filtered;
-      updateNextGameBanner(filtered);
+    const dayText = document.createElement('span');
+    dayText.className = 'day-text';
+    dayText.textContent = String(day);
 
+    const ballText = document.createElement('span');
+    ballText.className = 'ball-text';
+    ballText.innerHTML = '<svg class="tennis-ball-svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><circle cx="32" cy="32" r="24" fill="#b8ff4d"></circle><path d="M 20 10 C 35 18, 35 46, 20 54" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round"></path><path d="M 44 10 C 29 18, 29 46, 44 54" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round"></path></svg>';
+
+    number.appendChild(dayText);
+    number.appendChild(ballText);
+    cell.appendChild(number);
+    grid.appendChild(cell);
+  }
+
+  wrapper.appendChild(grid);
+  return wrapper;
+}
+
+function render() {
+  const filtered = data
+    .filter(function(item) {
+      return playerMatchesItem(item, selectedPlayer);
+    })
+    .sort(function(a, b) {
+      const ta = (parseDateValue(a.date, a.start) || new Date(0)).getTime();
+      const tb = (parseDateValue(b.date, b.start) || new Date(0)).getTime();
+      return ta - tb;
+    });
+
+  if (!filtered.length) {
+    lastRenderedRows = [];
+    updateNextGameBanner([]);
+    const emptyDiv = document.createElement('div');
+    emptyDiv.className = 'empty';
+    emptyDiv.textContent = selectedPlayer ? 'No games found for ' + selectedPlayer + '.' : 'No games found.';
+    contentEl.replaceChildren(buildPlayerChips(data), emptyDiv);
+    return;
+  }
+
+  lastRenderedRows = filtered;
+  updateNextGameBanner(filtered);
+
+  if (!calendarMonth) {
+    calendarMonth = getCalendarAnchorMonth(filtered);
+  }
+
+  contentEl.replaceChildren(
+    buildPlayerChips(data),
+    wrapSection('', '', buildCalendar(filtered), 'section-calendar'),
+    wrapSection('', '', buildTable(filtered), 'section-table')
+  );
+}
+
+async function loadData() {
+  setLoading('Loading schedule...');
+  hideNotice();
+  try {
+    const csvText = await fetchFirstWorkingCsv(CSV_URLS);
+    const liveRows = rowsFromCsv(csvText);
+    if (!liveRows.length) {
+      throw new Error('The sheet loaded but no valid dated rows were parsed.');
+    }
+    data = liveRows;
+    saveCache(liveRows);
+    if (!calendarMonth) {
+      calendarMonth = getCalendarAnchorMonth(liveRows);
+    }
+  } catch (error) {
+    const cachedRows = loadCache();
+    if (cachedRows.length) {
+      data = cachedRows;
       if (!calendarMonth) {
-        calendarMonth = getCalendarAnchorMonth(filtered);
+        calendarMonth = getCalendarAnchorMonth(cachedRows);
       }
-
-      const calendarSubtitle = '';
-      const tableSubtitle = String(filtered.length) + ' game' + (filtered.length === 1 ? '' : 's') + (selectedPlayer ? ' for ' + selectedPlayer : '');
-      contentEl.replaceChildren(
-        buildPlayerChips(data),
-        wrapSection('', '', buildCalendar(filtered), 'section-calendar'),
-        wrapSection('', '', buildTable(filtered), 'section-table')
-      );
-    }
-
-    async function loadData() {
-      setLoading('Loading schedule...');
-      hideNotice();
-      try {
-        const csvText = await fetchFirstWorkingCsv(CSV_URLS);
-        const liveRows = rowsFromCsv(csvText);
-        if (!liveRows.length) {
-          throw new Error('The sheet loaded but no valid dated rows were parsed.');
-        }
-        data = liveRows;
-        saveCache(liveRows);
-        if (!calendarMonth) {
-          calendarMonth = getCalendarAnchorMonth(liveRows);
-        }
-      } catch (error) {
-        const cachedRows = loadCache();
-        if (cachedRows.length) {
-          data = cachedRows;
-          if (!calendarMonth) {
-            calendarMonth = getCalendarAnchorMonth(cachedRows);
-          }
-          const tsLabel = getCacheTimestampLabel();
-          showNotice('Live Google Sheet data could not be loaded, so cached data is being shown instead' + (tsLabel ? ' (last updated ' + tsLabel + ')' : '') + '. ' + error.message);
-        } else {
-          data = fallbackRows;
-          if (!calendarMonth) {
-            calendarMonth = getCalendarAnchorMonth(fallbackRows);
-          }
-          showNotice('Live Google Sheet data could not be loaded, so backup data is being shown instead. ' + error.message);
-        }
+      const tsLabel = getCacheTimestampLabel();
+      showNotice('Live Google Sheet data could not be loaded, so cached data is being shown instead' + (tsLabel ? ' (last updated ' + tsLabel + ')' : '') + '. ' + error.message);
+    } else {
+      data = fallbackRows;
+      if (!calendarMonth) {
+        calendarMonth = getCalendarAnchorMonth(fallbackRows);
       }
-      render();
+      showNotice('Live Google Sheet data could not be loaded, so backup data is being shown instead. ' + error.message);
     }
+  }
+  render();
+}
 
-    function runTests() {
-      const sampleCsv1 = ['a,b', '1,2'].join('\n');
-      const sampleCsv2 = ['a,b', '"x,y",2'].join('\n');
-      const sampleCsv3 = ['Day,Date,Start Time,End Time,Duration (min),Location,Court,Players', 'Sat,18/04/2026,6:30,8:30,120,Wadala,3,"AD, NMD, Sheldon, Rohit Ramaswamy"'].join('\n');
-      const sampleCsv4 = ['Day,Date,Start (IST),End (IST),Duration,Location,Court,Players', 'Sat,18/04/2026,6:30,8:30,120,Wadala,3,AD + NMD + Sheldon + Rohit'].join('\n');
-      const sampleCsv5 = ['Day,Date,Start Time,End Time,Duration,Location,Court,Players', 'Sun,,20:00,21:30,90,Wadala,3,AD'].join('\n');
-      const sampleCsv6 = ['Day,Date,Start Time,End Time,Duration,Location,Court,Players', 'Sat,0,20:00,21:30,90,Wadala,3,AD'].join('\n');
-      const sampleCsv7 = ['Day,Date,Start Time,End Time,Duration,Location,Court,Player 1,Player 2,Player 3,Player 4,Remarks', 'Sun,19/04/2026,20:00,21:30,90,Wadala,3,AD,NMD,Sheldon,Rohit,Payment pending'].join('\n');
-      const sampleCsv8 = ['Day,Date,Start Time,End Time,Duration,Location,Court,Remarks', 'Sun,19/04/2026,20:00,21:30,90,Wadala,3,Payment pending'].join('\n');
-      const sampleCsv9 = ['Day,Date,Start Time,End Time,Duration,Location,Court,Player 1,Player 2,Player 3,Player 4', 'Sun,19/04/2026,20:00,21:30,90,Wadala,3,AD,NMD,Sheldon,Rohit'].join('\n');
-
-      console.assert(Array.isArray(CSV_URLS) && CSV_URLS.length === 3, 'Should define 3 fallback CSV URLs.');
-      console.assert(parseCSV(sampleCsv1).length === 2, 'Basic CSV parsing should work.');
-      console.assert(parseCSV(sampleCsv2)[1][0] === 'x,y', 'CSV parser should preserve commas in quotes.');
-      console.assert(normaliseTime('6:30') === '06:30', 'Time should be padded.');
-      console.assert(normaliseTime('6') === '06:00', 'Hour-only values should become HH:00.');
-      console.assert(isValidSheetDate('18/04/2026') === true, 'Valid dd/mm/yyyy dates should be accepted.');
-      console.assert(isValidSheetDate('0') === false, 'Invalid date values like 0 should be rejected.');
-      console.assert(formatShortDate('18/04/2026') === '18-Apr', 'Dates should be shown in dd-mmm format.');
-      console.assert(parseDateValue('18/04/2026', '06:30') instanceof Date, 'Date parser should return Date objects.');
-      console.assert(sanitizePlayers('AD, NMD, Sheldon, Rohit Ramaswamy') === 'AD, NMD, Sheldon, Rohit Ramaswamy', 'Combined Players text should be preserved.');
-      console.assert(compactPlayers(['AD', 'NMD', 'Sheldon', 'Rohit']) === 'AD, NMD, Sheldon, Rohit', 'Separate player columns should combine into one Players column.');
-      console.assert(rowsFromCsv(sampleCsv3)[0].players === 'AD, NMD, Sheldon, Rohit Ramaswamy', 'A real Players column should populate Players.');
-      console.assert(rowsFromCsv(sampleCsv4)[0].players === 'AD + NMD + Sheldon + Rohit', 'Combined Players text should be shown exactly as written.');
-      console.assert(rowsFromCsv(sampleCsv7)[0].players === 'AD, NMD, Sheldon, Rohit', 'Player 1 to Player 4 columns should populate Players while ignoring Remarks.');
-      console.assert(rowsFromCsv(sampleCsv8)[0].players === '', 'Remarks alone should not populate Players.');
-      console.assert(rowsFromCsv(sampleCsv9)[0].players === 'AD, NMD, Sheldon, Rohit', 'Four separate player columns should combine correctly.');
-      console.assert(rowsFromCsv(sampleCsv5).length === 0, 'Rows without dates should be excluded.');
-      console.assert(rowsFromCsv(sampleCsv6).length === 0, 'Rows with invalid date values should be excluded.');
-      console.assert(bookingKeyFromDateString('18/04/2026') === '2026-04-18', 'Booking keys should be generated from sheet dates.');
-      console.assert(getBookedDateCounts([{ date: '18/04/2026' }, { date: '18/04/2026' }, { date: '19/04/2026' }])['2026-04-18'] === 2, 'Booked date counts should aggregate repeated dates.');
-      console.assert(buildTable([{ day: 'Sat', date: '18/04/2026', start: '06:30', end: '08:30', duration: '120', location: 'Wadala', court: '3', players: 'AD, NMD, Sheldon, Rohit' }]).querySelectorAll('tbody tr').length === 1, 'Table builder should render one row.');
-      console.assert(buildTable([{ day: 'Sat', date: '18/04/2026', start: '06:30', end: '08:30', duration: '120', location: 'Wadala', court: '3', players: 'AD, NMD, Sheldon, Rohit' }]).querySelectorAll('thead th').length === 6, 'Table should render 6 columns including combined Date, Players and Share columns.');
-      calendarMonth = { year: 2026, month: 3 };
-      console.assert(buildCalendar([{ date: '18/04/2026', start: '06:30' }, { date: '19/04/2026', start: '20:00' }]).querySelectorAll('.calendar-day.is-booked').length >= 2, 'Calendar should highlight booked dates.');
-      selectedBookingDate = '2026-04-18';
-      console.assert(buildTable([{ day: 'Sat', date: '18/04/2026', start: '06:30', end: '08:30', duration: '120', location: 'Wadala', court: '3', players: 'AD, NMD, Sheldon, Rohit' }]).querySelectorAll('tr.is-selected').length === 1, 'Selected booking date should highlight matching table rows.');
-      selectedBookingDate = '';
-      calendarMonth = null;
-    }
-
-    loadData();
-  </script>
+loadData();
+</script>
 </body>
 </html>
